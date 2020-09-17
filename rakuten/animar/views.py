@@ -49,11 +49,26 @@ class AuthRegister(generics.CreateAPIView):
     serializer_class = UserSerializer
 
     def post(self, request, format=None):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=sHTTP_500_INTERNAL_SERVER_ERROR)
+        # serializer = UserSerializer(data=request.data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data, status=status.HTTP_200_OK)
+        # return Response(serializer.errors, status=sHTTP_500_INTERNAL_SERVER_ERROR)
+        data={
+            'mail': request.data['mail'],
+            'user_id': request.data['user_id'],
+            'password': request.data['password'],
+            # 'name': request.data['name'],
+            # 'image': request.data.image,
+            # 'sex': request.data.sex,
+            # 'type': request.data.type,
+            # 'birthday': request.data.birthday,
+            # 'residence': request.data.residence,
+            # 'profile': request.data.profile,
+        }
+        user = User(mail=data['mail'], user_id=data['user_id'], password=data['password'])
+        user.save()
+        return Response(data)
 
 # ユーザ情報取得のView(GET)
 class AuthInfoGetView(generics.RetrieveAPIView):

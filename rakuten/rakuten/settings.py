@@ -151,3 +151,5 @@ REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'detail',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
+
+AUTH_USER_MODEL = 'animar.User'
