@@ -49,9 +49,9 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password, **extra_fields): # 未着手
+    def create_superuser(self, user_id, email, password, **extra_fields): # 未着手
         request_data = {
-            'username': username,
+            'user_id': user_id,
             'email': email,
             'password': password
         }
@@ -80,8 +80,8 @@ class User(AbstractBaseUser):
 
     objects = UserManager()
 
-    # USERNAME_FIELD = 'email'
-    # REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = 'user_id'
+    REQUIRED_FIELDS = ['user_id']
 
     def user_has_perm(user, perm, obj):
         return _user_has_perm(user, perm, obj)
@@ -99,7 +99,10 @@ class User(AbstractBaseUser):
     # 何これ
     class Meta:
         db_table = 'api_user'
-        swappable = 'animar.User'
+        swappable = 'User'
 
 class Type(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name

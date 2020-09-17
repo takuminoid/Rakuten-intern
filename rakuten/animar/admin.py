@@ -4,8 +4,8 @@ from .models import User, Type
 
 
 class UserView(admin.ModelAdmin):
-    fields = ('id', 'mail', 'user_id', 'password', 'name', 'image', 'sex', 'type', 'birthday', 'residence', 'profile', 'created_at')
-    list_display = ('id', 'mail', 'user_id', 'password', 'name', 'image', 'sex', 'type', 'birthday', 'residence', 'profile', 'created_at')
+    fields = ('mail', 'user_id', 'password', 'name', 'image', 'sex', 'type', 'birthday', 'residence', 'profile', 'created_at')
+    list_display = ('mail', 'user_id', 'password', 'name', 'image', 'sex', 'type', 'birthday', 'residence', 'profile', 'created_at')
 
 class TypeView(admin.ModelAdmin):
     fields = ('name', )
