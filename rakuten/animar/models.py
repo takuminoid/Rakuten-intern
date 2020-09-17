@@ -72,7 +72,7 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=255, blank=True)
     image = models.ImageField(blank=True)
     sex = models.IntegerField(blank=True)
-    type = models.IntegerField(blank=True)
+    type = models.ForeignKey('Type', on_delete=models.CASCADE)
     birthday = models.DateTimeField(default=timezone.now, blank=True)
     residence = models.CharField(max_length=255, blank=True)
     profile = models.TextField(blank=True) # Textでok?
@@ -97,6 +97,9 @@ class User(AbstractBaseUser):
         return self.is_admin
 
     # 何これ
-    # class Meta:
-    #     db_table = 'api_user'
-    #     swappable = 'AUTH_USER_MODEL'
+    class Meta:
+        db_table = 'api_user'
+        swappable = 'animar.User'
+
+class Type(models.Model):
+    name = models.CharField(max_length=255)
