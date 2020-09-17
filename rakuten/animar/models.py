@@ -67,7 +67,7 @@ class User(AbstractBaseUser):
 
     id = models.AutoField(primary_key=True, unique=True)
     mail = models.EmailField()
-    user_id = CharField(max_length=255, primary_key=True, unique=True)
+    user_id = models.CharField(max_length=255, unique=True) # 主キーは1つまでらしいからIDでやる、uniqueで制限をかける
     password = models.CharField(max_length=50) # 要確認
     name = models.CharField(max_length=255, blank=True)
     image = models.ImageField(blank=True)

@@ -22,6 +22,6 @@ urlpatterns = [
     path('', include('animar.urls')),
     path('admin/', admin.site.urls),
     url(r'^login/', obtain_jwt_token),
-    url(r'^api/'. include('authentication.urls')),
-    url(r'^mypage/$', AuthInfoGetView.as_view()),
+    path(r'^api/',  include('animar.urls')),
+    # url(r'^mypage/$', AuthInfoGetView.as_view()),
 ]
