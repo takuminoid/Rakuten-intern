@@ -2,6 +2,7 @@ from django.contrib.auth import update_session_auth_hash
 from rest_framework import serializers
 
 from .models import User, UserManager
+import json
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -9,7 +10,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'mail', 'user_id', 'password', 'name', 'image', 'sex', 'type', 'birthday', 'residence', 'profile', 'created_at')
+        fields = ('mail', 'user_id', 'password', 'name', 'image', 'sex', 'type', 'birthday', 'residence', 'profile', 'created_at')
 
-    def create(self, validated_data):
-        return User.objects.create_user(request_data=validated_data)
+    def create(self, data):
+        mail = data['mail']
+        user_id = data['user_id']
+        password = data['password']
+        return User.objects.create_user(mail=mail, user_id=user_id, password=password)
