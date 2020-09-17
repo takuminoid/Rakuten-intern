@@ -19,7 +19,6 @@ from django.conf.urls import url
 from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
-    path('', include('animar.urls')),
     path('admin/', admin.site.urls),
     url(r'^login/', obtain_jwt_token),
     url(r'^api/',  include('animar.urls')),

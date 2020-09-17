@@ -32,9 +32,8 @@ class CustomUserManager(UserManager):
         return user_id
     
     def create_user(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
-        # now = timezone.now()
-        # if not request_data['user_id']: # user_idが無い場合エラーを返す
-        #     raise ValueError('Users must have an user id.')
+        if not user_id: # user_idが無い場合エラーを返す
+            raise ValueError('mast.')
 
         # profile = "" # 必要ある？
         # if request_data.get('profile'):

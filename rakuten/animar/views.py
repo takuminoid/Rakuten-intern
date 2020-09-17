@@ -43,6 +43,8 @@ class MainAPI(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ作成のView(POST)
+# 人間作成と動物作成のエンドポイントをわけて欲しい
+# 人間だったらこのまま、動物だったら必要な属性を持たせたものを別定義して欲しい
 class AuthRegister(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
@@ -86,7 +88,7 @@ class AuthInfoGetView(generics.RetrieveAPIView):
             'user_id': request.user.user_id,
             'password': request.user.password,
             'name': request.user.name,
-            'image': request.user.image,
+            # 'image': request.user.image,
             'sex': request.user.sex,
             'type': request.user.type,
             'birthday': request.user.birthday,
