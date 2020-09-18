@@ -122,7 +122,8 @@ class GetAllPost(APIView):
                 {'id': i.id,  # primary_key
                  'user_id': i.user_id,
                  'image': i.image,
-                 'content': i.content
+                 'content': i.content,
+                 'like': like.objects.filter(post_id=i.id).count()
                  }
                 for i in post
             ]
@@ -140,5 +141,3 @@ class PostLike(APIView):
 
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
