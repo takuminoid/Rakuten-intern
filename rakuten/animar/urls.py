@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import include, url
 from rest_framework import routers
-from .views import AuthRegisterHuman, AuthRegisterAnimal, GetUserInfo
+from .views import AuthRegisterHuman, AuthRegisterAnimal, GetUserInfo, GetAllPost
 from . import views
 
 urlpatterns = [
