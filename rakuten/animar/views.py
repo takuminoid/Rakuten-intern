@@ -18,14 +18,15 @@ from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer
 from .models import User, UserManager
 
+
 class MainAPI(APIView):
     def get(self, request):
         try:
             user = User.objects.all()
             user_resp = [
                 {'name': i.name,
-                'age': i.age
-                }
+                 'age': i.age
+                 }
                 for i in user
             ]
             return Response(user_resp)
@@ -42,6 +43,8 @@ class MainAPI(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ作成のView(POST)
+
+
 class AuthRegisterHuman(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
@@ -69,6 +72,7 @@ class AuthRegisterHuman(generics.CreateAPIView):
         # user.save()
         # return Response(data)
 
+
 class AuthRegisterAnimal(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
@@ -82,6 +86,8 @@ class AuthRegisterAnimal(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ情報取得のView(GET)
+
+
 class GetUserInfo(generics.RetrieveAPIView):
     '''
     ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
@@ -104,21 +110,35 @@ class GetUserInfo(generics.RetrieveAPIView):
             'residence': request.user.residence,
             'profile': request.user.profile,
             'created_at': request.user.created_at,
-            },
+        },
             status=status.HTTP_200_OK)
+
 
 class GetAllPost(APIView):
     def get(self, request):
         try:
             post = Post.objects.all()
             post_resp = [
-                {'id': i.id, # primary_key
-                'user_id': i.user_id,
-                'image': i.image,
-                'content': i.content
-                }
+                {'id': i.id,  # primary_key
+                 'user_id': i.user_id,
+                 'image': i.image,
+                 'content': i.content
+                 }
                 for i in post
             ]
             return Response(post_resp)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class PostLike(APIView):
+    def post(self, request):
+        try:
+            like = Like(post_id=request.data['post_id'], user_id=request.data['user_id'])
+            like.save()
+            return Response([request.data])
+
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+

@@ -123,8 +123,8 @@ class Type(models.Model):
 
 
 class Like(models.Model):
-    post_id = models.ForeignKey('Post', to_field='id', on_delete=models.CASCADE)
-    user_id = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
+    post_id = models.ForeignKey('Post', on_delete=models.CASCADE)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
