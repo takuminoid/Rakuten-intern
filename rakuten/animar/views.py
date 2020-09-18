@@ -131,6 +131,24 @@ class GetAllPost(APIView):
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class GetFilteredPost(APIView):
+    def get(self, request):
+        try:
+            query = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
+            post = Post.objects.filter(type=query)
+            post_resp = [
+                {'id': i.id,  # primary_key
+                 'user_id': i.user_id,
+                 'image': i.image,
+                 'content': i.content,
+                 'like': like.objects.filter(post_id=i.id).count()
+                 }
+                for i in post
+            ]
+            return Response(post_resp)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class PostLike(APIView):
     def post(self, request):
