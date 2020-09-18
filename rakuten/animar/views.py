@@ -20,14 +20,15 @@ from .models import User, UserManager, Post
 from image_processing.human_detection import detect_human
 
 
+
 class MainAPI(APIView):
     def get(self, request):
         try:
             user = User.objects.all()
             user_resp = [
                 {'name': i.name,
-                'age': i.age
-                }
+                 'age': i.age
+                 }
                 for i in user
             ]
             return Response(user_resp)
@@ -78,9 +79,9 @@ class PostAPI(APIView):
 
 
 # ユーザ作成のView(POST)
-# 人間作成と動物作成のエンドポイントをわけて欲しい
-# 人間だったらこのまま、動物だったら必要な属性を持たせたものを別定義して欲しい
-class AuthRegister_Human(generics.CreateAPIView):
+
+
+class AuthRegisterHuman(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = HumanSerializer
@@ -107,7 +108,8 @@ class AuthRegister_Human(generics.CreateAPIView):
         # user.save()
         # return Response(data)
 
-class AuthRegister_Animal(generics.CreateAPIView):
+
+class AuthRegisterAnimal(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = AnimalSerializer
@@ -120,7 +122,9 @@ class AuthRegister_Animal(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ情報取得のView(GET)
-class AuthInfoGetView(generics.RetrieveAPIView):
+
+
+class GetUserInfo(generics.RetrieveAPIView):
     '''
     この状態で、ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
     '''
@@ -142,5 +146,52 @@ class AuthInfoGetView(generics.RetrieveAPIView):
             'residence': request.user.residence,
             'profile': request.user.profile,
             'created_at': request.user.created_at,
-            },
+        },
             status=status.HTTP_200_OK)
+
+
+class GetAllPost(APIView):
+    def get(self, request):
+        try:
+            post = Post.objects.all()
+            post_resp = [
+                {'id': i.id,  # primary_key
+                 'user_id': i.user_id,
+                 'image': i.image,
+                 'content': i.content,
+                 'like': like.objects.filter(post_id=i.id).count()
+                 }
+                for i in post
+            ]
+            return Response(post_resp)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GetFilteredPost(APIView):
+    def get(self, request):
+        try:
+            query = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
+            post = Post.objects.filter(type=query)
+            post_resp = [
+                {'id': i.id,  # primary_key
+                 'user_id': i.user_id,
+                 'image': i.image,
+                 'content': i.content,
+                 'like': like.objects.filter(post_id=i.id).count()
+                 }
+                for i in post
+            ]
+            return Response(post_resp)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class PostLike(APIView):
+    def post(self, request):
+        try:
+            like = Like(post_id=request.data['post_id'], user_id=request.data['user_id'])
+            like.save()
+            return Response([request.data])
+
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
