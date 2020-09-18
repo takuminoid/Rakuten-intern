@@ -128,6 +128,6 @@ class Like(models.Model):
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
-    user_id = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE) # Userは文字列？
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     image = models.ImageField()
     content = models.TextField()

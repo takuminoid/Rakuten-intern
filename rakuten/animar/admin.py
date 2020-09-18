@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User, Type, Like
+from .models import User, Type, Like, Post
 
 
 class UserView(admin.ModelAdmin):
@@ -10,12 +10,17 @@ class UserView(admin.ModelAdmin):
 class TypeView(admin.ModelAdmin):
     fields = ('name', )
     list_display = ('name',)
-    
+
 class LikeView(admin.ModelAdmin):
     fields = ('post_id', 'user_id', )
     list_display = ('post_id', 'user_id', )
+
+class PostView(admin.ModelAdmin):
+    fields = ('id', 'user_id', 'image', 'content', )
+    list_display = ('id', 'user_id', 'image', 'content', )
 
 
 admin.site.register(User, UserView)
 admin.site.register(Type, TypeView)
 admin.site.register(Like, LikeView)
+admin.site.register(Post, PostView)
