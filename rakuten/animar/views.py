@@ -16,8 +16,8 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer
-from .models import User, UserManager, Post
-from image_processing.human_detection import detect_human
+from .models import User, UserManager, Post, Type, Like
+# from image_processing.human_detection import detect_human
 
 
 
@@ -139,7 +139,7 @@ class GetUserInfo(generics.RetrieveAPIView):
             'user_id': request.user.user_id,
             'password': request.user.password,
             'name': request.user.name,
-            'image': request.user.image,
+            # 'image': request.user.image, # Unicodeエラーが出る
             'sex': request.user.sex,
             'type': request.user.type,
             'birthday': request.user.birthday,
@@ -151,15 +151,24 @@ class GetUserInfo(generics.RetrieveAPIView):
 
 
 class GetAllPost(APIView):
+    '''
+    Author: Takumi Sato
+    Date: 2020/09/18
+    About: You can get all post which users posted in animar. This is made for feed screen.
+    Use Exmple:
+        headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
+        r = requests.get('http://localhost:8000/api/getpost/', headers=headers)
+        r.json() # [{'id': 1, 'user_id': 'takumm', 'content': 'こんにちは！', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'content': 'me', 'like': 0}]
+    '''
     def get(self, request):
         try:
             post = Post.objects.all()
             post_resp = [
                 {'id': i.id,  # primary_key
-                 'user_id': i.user_id,
-                 'image': i.image,
+                 'user_id': i.user_id.user_id,
+                 # 'image': i.image, # UnicodeDecodeError
                  'content': i.content,
-                 'like': like.objects.filter(post_id=i.id).count()
+                 'like': Like.objects.filter(post_id=i.id).count()
                  }
                 for i in post
             ]
@@ -167,19 +176,29 @@ class GetAllPost(APIView):
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class GetFilteredPost(APIView):
+class GetFilteredPost(APIView): # typeが入っていないユーザーの投稿があると，エラーが出ます
+    '''
+    Author: Takumi Sato
+    Data: 2020/09/18
+    About: You can get filtered posts. "Filtered" means that you can select type of animal on posts.
+    Use Example:
+        data = {'name': '猫'}
+        headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}
+        r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
+        r.json() # [{'id': 2, 'user_id': 'takumi', 'content': 'me', 'like': 0}]
+    '''
     def get(self, request):
         try:
-            query = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
-            post = Post.objects.filter(type=query)
+            req_type = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
+            post = Post.objects.all()
             post_resp = [
                 {'id': i.id,  # primary_key
-                 'user_id': i.user_id,
-                 'image': i.image,
+                 'user_id': i.user_id.user_id,
+                 # 'image': i.image,
                  'content': i.content,
-                 'like': like.objects.filter(post_id=i.id).count()
+                 'like': Like.objects.filter(post_id=i.id).count()
                  }
-                for i in post
+                for i in post if User.objects.get(user_id=i.user_id.user_id).type.name==req_type # 設計書ではidと結び付けてる
             ]
             return Response(post_resp)
         except:
