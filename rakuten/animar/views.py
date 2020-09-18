@@ -42,7 +42,7 @@ class MainAPI(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ作成のView(POST)
-class AuthRegister_Human(generics.CreateAPIView):
+class AuthRegisterHuman(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = HumanSerializer
@@ -69,7 +69,7 @@ class AuthRegister_Human(generics.CreateAPIView):
         # user.save()
         # return Response(data)
 
-class AuthRegister_Animal(generics.CreateAPIView):
+class AuthRegisterAnimal(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = AnimalSerializer
@@ -82,7 +82,7 @@ class AuthRegister_Animal(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ情報取得のView(GET)
-class AuthInfoGetView(generics.RetrieveAPIView):
+class GetUserInfo(generics.RetrieveAPIView):
     '''
     ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
     '''
