@@ -6,22 +6,6 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-# class User(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     mail = models.EmailField()
-#     user_id = CharField(max_length=255, primary_key=True)
-#     password = models.CharField(max_length=50) # 要確認
-#     name = models.CharField(max_length=255)
-#     image = models.ImageField()
-#     sex = models.IntegerField()
-#     type = models.IntegerField()
-#     birthday = models.DateTimeField(default=timezone.now)
-#     residence = models.CharField(max_length=255)
-#     profile = models.TextField()# Textでok?
-#     created_at = models.DateTimeField(default=timezone.now)
-
-
-
 class CustomUserManager(UserManager):
     use_in_migrations = True
     def _create_user(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
@@ -62,7 +46,7 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(user_id, mail, password, name, image, sex, type, birthday, residence, profile, **extra_fields)
 
-    def create_superuser(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields): # 未着手
+    def create_superuser(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
         # request_data = {
         #     'user_id': user_id,
         #     'mail': mail,
@@ -83,13 +67,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     # https://qiita.com/xKxAxKx/items/60e8fb93d6bbeebcf065
 
     id = models.AutoField(primary_key=True, unique=True)
-    mail = models.EmailField()
+    mail = models.EmailField(max_length=70)
     user_id = models.CharField(max_length=255, unique=True) # 主キーは1つまでらしいからIDでやる、uniqueで制限をかける
     name = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(blank=True, null=True)
     sex = models.IntegerField(blank=True, null=True)
     type = models.ForeignKey('Type', on_delete=models.CASCADE, blank=True, null=True)
-    birthday = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    birthday = models.DateField(default=timezone.now, blank=True, null=True)
     residence = models.CharField(max_length=255, blank=True, null=True)
     profile = models.TextField(blank=True, null=True) # Textでok?
     created_at = models.DateTimeField(default=timezone.now)

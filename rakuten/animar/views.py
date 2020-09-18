@@ -18,7 +18,6 @@ from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer
 from .models import User, UserManager
 
-
 class MainAPI(APIView):
     def get(self, request):
         try:
@@ -43,8 +42,6 @@ class MainAPI(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ作成のView(POST)
-# 人間作成と動物作成のエンドポイントをわけて欲しい
-# 人間だったらこのまま、動物だったら必要な属性を持たせたものを別定義して欲しい
 class AuthRegister_Human(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
@@ -87,7 +84,7 @@ class AuthRegister_Animal(generics.CreateAPIView):
 # ユーザ情報取得のView(GET)
 class AuthInfoGetView(generics.RetrieveAPIView):
     '''
-    この状態で、ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
+    ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
     '''
     # permission_classes = (permissions.IsAuthenticated,) # ログインしている状態でなければ取得できないようにする
     queryset = User.objects.all()
