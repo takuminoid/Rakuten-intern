@@ -16,7 +16,9 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer
-from .models import User, UserManager
+from .models import User, UserManager, Post
+from image_processing.human_detection import detect_human
+
 
 class MainAPI(APIView):
     def get(self, request):
@@ -41,8 +43,44 @@ class MainAPI(APIView):
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class PostAPI(APIView):
+    """
+    author : Takahiro Suzuki
+    date   : 2020/09/18
+    description :
+    process HTTP POST request.
+    """
+
+    def post(self, request):
+        """
+        process POST request.
+        overview of this method is following:
+        STEP1 : detect human is in posted image or not.
+        STEP2 : if human is in image, reject this post request and return error response.
+        STEP3 : otherwise, add data to Post Database and return success response.
+        """
+        id = request.data['id']
+        user_id = request.data['user_id']
+        image = request.data['image']
+        content = request.data['content']
+
+        # TODO: 未実装なので実装をする
+        isinHuman = True #detect_human(image)
+
+        if isinHuman:
+            # TODO: レスポンスがこんな感じでいいのかを確認する
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            post_db = Post(id=id, user_id=user_id, image=image, content=content)
+            post_db.save()
+            return Response([request.data])
+
+
 # ユーザ作成のView(POST)
-class AuthRegisterHuman(generics.CreateAPIView):
+# 人間作成と動物作成のエンドポイントをわけて欲しい
+# 人間だったらこのまま、動物だったら必要な属性を持たせたものを別定義して欲しい
+class AuthRegister_Human(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = HumanSerializer
@@ -69,7 +107,7 @@ class AuthRegisterHuman(generics.CreateAPIView):
         # user.save()
         # return Response(data)
 
-class AuthRegisterAnimal(generics.CreateAPIView):
+class AuthRegister_Animal(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = AnimalSerializer
@@ -82,9 +120,9 @@ class AuthRegisterAnimal(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ情報取得のView(GET)
-class GetUserInfo(generics.RetrieveAPIView):
+class AuthInfoGetView(generics.RetrieveAPIView):
     '''
-    ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
+    この状態で、ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
     '''
     # permission_classes = (permissions.IsAuthenticated,) # ログインしている状態でなければ取得できないようにする
     queryset = User.objects.all()
