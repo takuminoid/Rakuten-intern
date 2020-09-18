@@ -106,3 +106,19 @@ class GetUserInfo(generics.RetrieveAPIView):
             'created_at': request.user.created_at,
             },
             status=status.HTTP_200_OK)
+
+class GetAllPost(APIView):
+    def get(self, request):
+        try:
+            post = Post.objects.all()
+            post_resp = [
+                {'id': i.id, # primary_key
+                'user_id': i.user_id,
+                'image': i.image,
+                'content': i.content
+                }
+                for i in post
+            ]
+            return Response(post_resp)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

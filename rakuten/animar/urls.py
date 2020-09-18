@@ -9,5 +9,6 @@ urlpatterns = [
     path('', views.MainAPI.as_view(), ),
     url(r'^register/human/$', AuthRegisterHuman.as_view()),
     url(r'^register/animal/$', AuthRegisterAnimal.as_view()),
-    url(r'user/$', GetUserInfo.as_view(), ),
+    url(r'user/$', GetUserInfo.as_view()),
+    url(r'getpost/$', GetAllPost.as_view())
 ]
