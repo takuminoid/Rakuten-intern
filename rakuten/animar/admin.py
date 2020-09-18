@@ -16,8 +16,8 @@ class LikeView(admin.ModelAdmin):
     list_display = ('post_id', 'user_id', )
 
 class PostView(admin.ModelAdmin):
-    fields = ('id', 'user_id', 'image', 'content', )
-    list_display = ('id', 'user_id', 'image', 'content', )
+    fields = ('user_id', 'image', 'content', )
+    list_display = ('user_id', 'image', 'content', )
 
 
 admin.site.register(User, UserView)
