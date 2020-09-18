@@ -4,13 +4,15 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import Main from '../src/components/Main'
+import Login from '../src/components/Login'
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Switch>
-          <Route path="/main" component={Main} />
+          <Route exact path="/main" component={Main} />
+          <Route exact path="/login" component={Login} />
           <Route><h1>Not Found</h1></Route>
         </Switch>
       </Router>
