@@ -125,3 +125,9 @@ class Type(models.Model):
 class Like(models.Model):
     post_id = models.models.ForeignKey('Post', to_field='id', on_delete=models.CASCADE)
     user_id = models.models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
+
+class Post(models.Model):
+    id = models.AutoField(primary_key=True, unique=True)
+    user_id = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE) # Userは文字列？
+    image = models.ImageField()
+    content = models.TextField()
