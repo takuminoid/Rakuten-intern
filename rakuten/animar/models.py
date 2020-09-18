@@ -120,3 +120,8 @@ class Type(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Like(models.Model):
+    post_id = models.models.ForeignKey('Post', to_field='id', on_delete=models.CASCADE)
+    user_id = models.models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
