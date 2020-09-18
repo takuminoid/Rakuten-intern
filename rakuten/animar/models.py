@@ -30,7 +30,7 @@ class CustomUserManager(UserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user_id
-    
+
     def create_user(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
         if not user_id: # user_idが無い場合エラーを返す
             raise ValueError('mast.')
@@ -55,7 +55,7 @@ class CustomUserManager(UserManager):
         # mail = self.normalize_email(mail)
         # user = self.model(
         #     mail=mail,
-        #     user_id=user_id, 
+        #     user_id=user_id,
         #     **extra_fields
         # )
         extra_fields.setdefault('is_staff', False)

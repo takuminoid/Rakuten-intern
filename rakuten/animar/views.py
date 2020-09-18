@@ -15,7 +15,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
-from .serializer import UserSerializer
+from .serializer import HumanSerializer, AnimalSerializer
 from .models import User, UserManager
 
 
@@ -45,13 +45,13 @@ class MainAPI(APIView):
 # ユーザ作成のView(POST)
 # 人間作成と動物作成のエンドポイントをわけて欲しい
 # 人間だったらこのまま、動物だったら必要な属性を持たせたものを別定義して欲しい
-class AuthRegister(generics.CreateAPIView):
+class AuthRegister_Human(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = HumanSerializer
 
     def post(self, request, format=None):
-        serializer = UserSerializer(data=request.data)
+        serializer = HumanSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -72,6 +72,18 @@ class AuthRegister(generics.CreateAPIView):
         # user.save()
         # return Response(data)
 
+class AuthRegister_Animal(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = User.objects.all()
+    serializer_class = AnimalSerializer
+
+    def post(self, request, format=None):
+        serializer = AnimalSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 # ユーザ情報取得のView(GET)
 class AuthInfoGetView(generics.RetrieveAPIView):
     '''
@@ -79,7 +91,7 @@ class AuthInfoGetView(generics.RetrieveAPIView):
     '''
     # permission_classes = (permissions.IsAuthenticated,) # ログインしている状態でなければ取得できないようにする
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = AnimalSerializer
 
     def get(self, request, format=None):
         return Response(data={
@@ -88,7 +100,7 @@ class AuthInfoGetView(generics.RetrieveAPIView):
             'user_id': request.user.user_id,
             'password': request.user.password,
             'name': request.user.name,
-            # 'image': request.user.image,
+            'image': request.user.image,
             'sex': request.user.sex,
             'type': request.user.type,
             'birthday': request.user.birthday,
