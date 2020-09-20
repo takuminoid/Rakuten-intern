@@ -4,7 +4,7 @@ import loginA from '../api/login'
 
 const initialState = {
     user_id: '', 
-    password: ''
+    password: '',
 }
 
 
