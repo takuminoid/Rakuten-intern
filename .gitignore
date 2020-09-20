@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# add by Sato
+rakuten/user_images/*
+rakuten/post_images/*

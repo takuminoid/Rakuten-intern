@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer
-from .models import User, UserManager, Post
+from .models import User, UserManager, Post, Type, Like
 # from image_processing.human_detection import detect_human
 
 
@@ -122,13 +122,13 @@ class AuthRegisterAnimal(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ情報取得のView(GET)
-
-
 class GetUserInfo(generics.RetrieveAPIView):
     '''
-    この状態で、ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
+    Use example:
+        headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
+        r = requests.get('http://localhost:8000/api/user/', headers=headers)
+        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '(暗号化されたパスワード)', 'name': None, 'image': 'user_images/~~.png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
     '''
-    # permission_classes = (permissions.IsAuthenticated,) # ログインしている状態でなければ取得できないようにする
     queryset = User.objects.all()
     serializer_class = AnimalSerializer
 
@@ -139,9 +139,9 @@ class GetUserInfo(generics.RetrieveAPIView):
             'user_id': request.user.user_id,
             'password': request.user.password,
             'name': request.user.name,
-            'image': request.user.image,
+            'image': request.user.image.name, # パスを返す
             'sex': request.user.sex,
-            'type': request.user.type,
+            'type': request.user.type.name, # nameを返せばいい？
             'birthday': request.user.birthday,
             'residence': request.user.residence,
             'profile': request.user.profile,
@@ -151,15 +151,24 @@ class GetUserInfo(generics.RetrieveAPIView):
 
 
 class GetAllPost(APIView):
+    '''
+    Author: Takumi Sato
+    Date: 2020/09/18
+    About: You can get all post which users posted in animar. This is made for feed screen.
+    Use Exmple:
+        headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-TYpeがなくても通る
+        r = requests.get('http://localhost:8000/api/getpost/', headers=headers)
+        r.json() # [{'id': 1, 'user_id': 'takumm', 'image': 'post_images/cutecat.png', 'content': 'こんにちは！私は猫です', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'content': 'hello, I am cat', 'like': 0}]
+    '''
     def get(self, request):
         try:
             post = Post.objects.all()
             post_resp = [
                 {'id': i.id,  # primary_key
-                 'user_id': i.user_id,
-                 'image': i.image,
+                 'user_id': i.user_id.user_id,
+                 'image': i.image.name, # パスを返す，例) "post_images/~~.png"
                  'content': i.content,
-                 'like': like.objects.filter(post_id=i.id).count()
+                 'like': Like.objects.filter(post_id=i.id).count()
                  }
                 for i in post
             ]
@@ -167,19 +176,29 @@ class GetAllPost(APIView):
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class GetFilteredPost(APIView):
+class GetFilteredPost(APIView): # typeが入っていないユーザーの投稿があると，エラーが出ます
+    '''
+    Author: Takumi Sato
+    Data: 2020/09/18
+    About: You can get filtered posts. "Filtered" means that you can select type of animal on posts.
+    Use Example:
+        data = {'name': '猫'}
+        headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-Typeがあると通らない
+        r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
+        r.json() # [{'id': 2, 'user_id': 'takumi', 'image': 'post_images/cutecat.png', 'content': 'hello, I am cat.', 'like': 0}]
+    '''
     def get(self, request):
         try:
-            query = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
-            post = Post.objects.filter(type=query)
+            req_type = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
+            post = Post.objects.all()
             post_resp = [
                 {'id': i.id,  # primary_key
-                 'user_id': i.user_id,
-                 'image': i.image,
+                 'user_id': i.user_id.user_id,
+                 'image': i.image.name, # パスを返す，例) "post_images/~~.png"
                  'content': i.content,
-                 'like': like.objects.filter(post_id=i.id).count()
+                 'like': Like.objects.filter(post_id=i.id).count()
                  }
-                for i in post
+                for i in post if User.objects.get(user_id=i.user_id.user_id).type.name==req_type # 設計書ではidと結び付けてるけどいい？
             ]
             return Response(post_resp)
         except:

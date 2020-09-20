@@ -19,40 +19,11 @@ class CustomUserManager(UserManager):
         if not user_id: # user_idが無い場合エラーを返す
             raise ValueError('mast.')
 
-        # profile = "" # 必要ある？
-        # if request_data.get('profile'):
-        #     profile = request_data['profile']
-
-        # user = self.model( # パスワード含める？
-        #     mail=request_data['mail'],
-        #     user_id=request_data['user_id'],
-        #     name=request_data['name'],
-        #     image=request_data['password'],
-        #     sex=request_data['sex'],
-        #     type=request_data['type'],
-        #     birthday=request_data['birthday'],
-        #     residence=request_data['residence'],
-        #     profile=profile,
-        #     created_at=now
-        # )
-        # user_id = self.model.normalize_username(user_id)
-        # mail = self.normalize_email(mail)
-        # user = self.model(
-        #     mail=mail,
-        #     user_id=user_id,
-        #     **extra_fields
-        # )
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(user_id, mail, password, name, image, sex, type, birthday, residence, profile, **extra_fields)
 
     def create_superuser(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
-        # request_data = {
-        #     'user_id': user_id,
-        #     'mail': mail,
-        #     'password': password
-        # }
-
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         if extra_fields.get('is_staff') is not True:
@@ -70,12 +41,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     mail = models.EmailField(max_length=70)
     user_id = models.CharField(max_length=255, unique=True) # 主キーは1つまでらしいからIDでやる、uniqueで制限をかける
     name = models.CharField(max_length=255, blank=True, null=True)
-    image = models.ImageField(blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='user_images/')
     sex = models.IntegerField(blank=True, null=True)
     type = models.ForeignKey('Type', on_delete=models.CASCADE, blank=True, null=True)
-    birthday = models.DateField(default=timezone.now, blank=True, null=True)
+    birthday = models.DateField(blank=True, null=True)
     residence = models.CharField(max_length=255, blank=True, null=True)
-    profile = models.TextField(blank=True, null=True) # Textでok?
+    profile = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(
         _('staff status'),
@@ -121,7 +92,6 @@ class Type(models.Model):
     def __str__(self):
         return self.name
 
-
 class Like(models.Model):
     post_id = models.ForeignKey('Post', on_delete=models.CASCADE)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
@@ -129,5 +99,5 @@ class Like(models.Model):
 class Post(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
-    image = models.ImageField()
+    image = models.ImageField(upload_to='post_images/')
     content = models.TextField()
