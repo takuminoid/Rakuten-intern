@@ -127,6 +127,10 @@ class AuthRegisterAnimal(generics.CreateAPIView):
 class GetUserInfo(generics.RetrieveAPIView):
     '''
     この状態で、ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
+    Use example:
+        headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
+        r = requests.get('http://localhost:8000/api/user/', headers=headers)
+        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '(暗号化されたパスワード)', 'name': None, 'image': 'user_images/~~.png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
     '''
     # permission_classes = (permissions.IsAuthenticated,) # ログインしている状態でなければ取得できないようにする
     queryset = User.objects.all()
@@ -139,9 +143,9 @@ class GetUserInfo(generics.RetrieveAPIView):
             'user_id': request.user.user_id,
             'password': request.user.password,
             'name': request.user.name,
-            # 'image': request.user.image, # Unicodeエラーが出る
+            'image': request.user.image.name, # パスを返す
             'sex': request.user.sex,
-            'type': request.user.type,
+            'type': request.user.type.name,
             'birthday': request.user.birthday,
             'residence': request.user.residence,
             'profile': request.user.profile,
@@ -183,7 +187,7 @@ class GetFilteredPost(APIView): # typeが入っていないユーザーの投稿
     About: You can get filtered posts. "Filtered" means that you can select type of animal on posts.
     Use Example:
         data = {'name': '猫'}
-        headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}
+        headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-Typeがあると通らない
         r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
         r.json() # [{'id': 2, 'user_id': 'takumi', 'image': 'post_images/cutecat.png', 'content': 'hello, I am cat.', 'like': 0}]
     '''

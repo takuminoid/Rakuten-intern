@@ -73,7 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     image = models.ImageField(blank=True, null=True, upload_to='user_images/')
     sex = models.IntegerField(blank=True, null=True)
     type = models.ForeignKey('Type', on_delete=models.CASCADE, blank=True, null=True)
-    birthday = models.DateField(default=timezone.now, blank=True, null=True)
+    birthday = models.DateField(blank=True, null=True)
     residence = models.CharField(max_length=255, blank=True, null=True)
     profile = models.TextField(blank=True, null=True) # Textでok?
     created_at = models.DateTimeField(default=timezone.now)
