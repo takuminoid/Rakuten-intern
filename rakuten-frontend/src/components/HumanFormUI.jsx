@@ -1,9 +1,6 @@
 import React, {useEffect, useState } from 'react';
-// import getUser from '../api/getUserAPI';
 import postUser from '../api/postUserAPI';
 import HumanForm, {AnimalForm} from '../hooks/useUser';
-// import  UserForm from '../hooks/useUser'
-
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -17,14 +14,9 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-// import {commonStyle} from './style';
 import RedditTextField from './RedditTextField'
-
-// import {commonStyle} from './style';
-// import {commonStyle} from './style';
 import {
     fade,
     MuiThemeProvider,
@@ -32,7 +24,7 @@ import {
     withStyles,
     makeStyles,
     createMuiTheme,
-  } from '@material-ui/core/styles';
+} from '@material-ui/core/styles';
 
 const HumanFormUI= ({signup_style,humanSubmit}) =>  {
     const classes = signup_style();
@@ -55,7 +47,6 @@ const HumanFormUI= ({signup_style,humanSubmit}) =>  {
         humanSubmit()
     } 
     
-    // human
     // const onSubmit = data => console.log(data);
     const [errorMessage, setErrorMessage] = useState()
     const [user, setUser] = useState([])
@@ -64,7 +55,7 @@ const HumanFormUI= ({signup_style,humanSubmit}) =>  {
         showPassword: false,//ToDO I want to  togle show pass
         showQestion:false, //To show "Are you human or Animal "
         showAnimalSignUp:false, //To show " SignUp of Animal "
-      });
+    });
 
     return(
     <div className={classes.paper}>
@@ -113,6 +104,7 @@ const HumanFormUI= ({signup_style,humanSubmit}) =>  {
                 // autoComplete="password"
                 value={state.password}
                 onChange={onChange}
+                //TODO パスワードの表示切り替え（CSSの変更必須）
                 // InputProps={{
                 //     endAdornment: (
                 //       <InputAdornment position="end">

@@ -1,20 +1,12 @@
 import React, {useEffect, useState } from 'react';
-
-// import getUser from '../api/getUserAPI';
 import postUser from '../api/postUserAPI';
 import HumanForm, {AnimalForm} from '../hooks/useUser';
-// import  UserForm from '../hooks/useUser'
-
 import Button from '@material-ui/core/Button';
 import { useHistory } from "react-router-dom";
 import Typography from '@material-ui/core/Typography';
-
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-// import {commonStyle} from './style';
 import RedditTextField from './RedditTextField'
-// import {commonStyle} from './style';
-// import {commonStyle} from './style';
 import {
     fade,
     MuiThemeProvider,
@@ -38,13 +30,6 @@ const Qestion= ({signup_style,Submit}) =>  {
         showAnimalSignUp:false, //To show " SignUp of Animal "
       });
 
-    // const handleClickShowPassword = () => {
-    // setValues({ ...values, showPassword: !values.showPassword });
-    // };
-
-    // const handleMouseDownPassword = (event) => {
-    // event.preventDefault();
-    // };
     const handleToFeed = () => {
         history.push('/main')
       }
@@ -55,7 +40,6 @@ const Qestion= ({signup_style,Submit}) =>  {
         e.preventDefault()
         Submit()
          
-        // dom.push({ "email": state.email, "password": state.password})
     } 
 
     return(

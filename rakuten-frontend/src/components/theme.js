@@ -10,7 +10,6 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-// import {commonStyle} from './style';
 import {
     fade,
     MuiThemeProvider,
@@ -20,7 +19,9 @@ import {
     createMuiTheme,
   } from '@material-ui/core/styles';
 
-const themeDark = createMuiTheme({
+
+// SignUp Theme not base theme
+const themeSignUp = createMuiTheme({
     palette: {
     primary: {
         light: '#87BCBF',
@@ -126,5 +127,5 @@ const signup_style = makeStyles((theme) => ({
         padding:" 20px"
       }
   }));
-export default themeDark;
+export default themeSignUp;
 export  {signup_style};

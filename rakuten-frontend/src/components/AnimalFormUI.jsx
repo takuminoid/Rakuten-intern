@@ -1,9 +1,6 @@
 import React, {useEffect, useState } from 'react';
-// import getUser from '../api/getUserAPI';
 import postUser from '../api/postUserAPI';
 import HumanForm, {AnimalForm} from '../hooks/useUser';
-// import  UserForm from '../hooks/useUser'
-
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,15 +15,10 @@ import Container from '@material-ui/core/Container';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import { useHistory } from "react-router-dom";
-
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-// import {commonStyle} from './style';
 import RedditTextField from './RedditTextField'
 import { DropzoneDialog } from 'material-ui-dropzone';
-
-// import {commonStyle} from './style';
-// import {commonStyle} from './style';
 import {
     fade,
     MuiThemeProvider,
@@ -61,33 +53,21 @@ const AnimalFormUI= ({signup_style}) =>  {
     } 
     useEffect(() => {
         console.log(state);
-      }, [state]);
+        }, [state]);
     const [files, setFiles] = useState([]);
     const [open, setOpen] = useState(false);
 
-    // human
-    // const onSubmit = data => console.log(data);
     const handleSave = (acceptedFiles) => {
         console.log('handleSave');
         // previewの追加
         setFiles(acceptedFiles.map(
-          file => Object.assign(file, {
-            preview: URL.createObjectURL(file)
-          })));
-          console.log('files', files.map((file, index) => (file.preview)));
-        //   fetch("GET", "")
-        //   // the image is now dowloaded to device's storage
-        //   .then(resp => {
-        //     // the image path you can use it directly with Image component
-        //     imagePath = resp.path();
-        //     return resp.readFile("base64");
-        //   })
-      }
+        file => Object.assign(file, {
+        preview: URL.createObjectURL(file)
+        })));
+        console.log('files', files.map((file, index) => (file.preview)));
 
-    //   const resp = fetch( "blob:http://localhost:3000/17741bde-5c59-4629-a13d-687c8895fc93", {
-    //     method: "GET",
-    //     credentials: "same-origin",
-    // })
+    }
+
 
 
 
@@ -95,22 +75,25 @@ const AnimalFormUI= ({signup_style}) =>  {
         <div className={classes.paper}>
         
         <Typography   className={classes.animar} color="secondary" component="h1" variant="h4">
-        animar
+            animar
         </Typography>
         <Typography className={classes.guide} color="secondary" component="h2" variant="h4">
-        Welcome animal!
+            Welcome animal!
         </Typography>
         <Typography  color="secondary" component="h2" variant="h6">
-        Please enter your animal info
+            Please enter your animal info
         </Typography>
-        <Avatar src={files.map((file, index) => (file.preview))} className={classes.avatar}>
 
+        {/* Avatar is usr profile image */}
+        <Avatar src={files.map((file, index) => (file.preview))} className={classes.avatar}>
         </Avatar>
+
 
         <form  onSubmit={onSubmit} className={classes.form,classes.sign_in_card} >
             <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
                 Add Image
             </Button>
+            {/* DropzoneDialog is avatar image uploder */}
 
             <DropzoneDialog
                 acceptedFiles={['image/*']}
@@ -138,6 +121,8 @@ const AnimalFormUI= ({signup_style}) =>  {
                 showPreviews={true}
                 showFileNamesInPreview={true}
             />
+
+
             <Grid container spacing={2}>
             <Grid item xs={12}>
             <RedditTextField
