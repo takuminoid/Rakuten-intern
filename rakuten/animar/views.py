@@ -156,9 +156,9 @@ class GetAllPost(APIView):
     Date: 2020/09/18
     About: You can get all post which users posted in animar. This is made for feed screen.
     Use Exmple:
-        headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
+        headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-TYpeがなくても通る
         r = requests.get('http://localhost:8000/api/getpost/', headers=headers)
-        r.json() # [{'id': 1, 'user_id': 'takumm', 'content': 'こんにちは！', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'content': 'me', 'like': 0}]
+        r.json() # [{'id': 1, 'user_id': 'takumm', 'image': 'post_images/cutecat.png', 'content': 'こんにちは！私は猫です', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'content': 'hello, I am cat', 'like': 0}]
     '''
     def get(self, request):
         try:
@@ -166,7 +166,7 @@ class GetAllPost(APIView):
             post_resp = [
                 {'id': i.id,  # primary_key
                  'user_id': i.user_id.user_id,
-                 # 'image': i.image, # UnicodeDecodeError
+                 'image': i.image.name, # パスを返す，例) "post_images/~~.png"
                  'content': i.content,
                  'like': Like.objects.filter(post_id=i.id).count()
                  }
@@ -185,7 +185,7 @@ class GetFilteredPost(APIView): # typeが入っていないユーザーの投稿
         data = {'name': '猫'}
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}
         r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
-        r.json() # [{'id': 2, 'user_id': 'takumi', 'content': 'me', 'like': 0}]
+        r.json() # [{'id': 2, 'user_id': 'takumi', 'image': 'post_images/cutecat.png', 'content': 'hello, I am cat.', 'like': 0}]
     '''
     def get(self, request):
         try:
@@ -194,7 +194,7 @@ class GetFilteredPost(APIView): # typeが入っていないユーザーの投稿
             post_resp = [
                 {'id': i.id,  # primary_key
                  'user_id': i.user_id.user_id,
-                 # 'image': i.image,
+                 'image': i.image.name, # # パスを返す，例) "post_images/~~.png"
                  'content': i.content,
                  'like': Like.objects.filter(post_id=i.id).count()
                  }

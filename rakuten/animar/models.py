@@ -70,7 +70,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     mail = models.EmailField(max_length=70)
     user_id = models.CharField(max_length=255, unique=True) # 主キーは1つまでらしいからIDでやる、uniqueで制限をかける
     name = models.CharField(max_length=255, blank=True, null=True)
-    image = models.ImageField(blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='user_images/')
     sex = models.IntegerField(blank=True, null=True)
     type = models.ForeignKey('Type', on_delete=models.CASCADE, blank=True, null=True)
     birthday = models.DateField(default=timezone.now, blank=True, null=True)
@@ -129,5 +129,5 @@ class Like(models.Model):
 class Post(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
-    image = models.ImageField()
+    image = models.ImageField(upload_to='post_images/')
     content = models.TextField()
