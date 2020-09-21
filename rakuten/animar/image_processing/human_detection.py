@@ -1,65 +1,122 @@
-# -*- coding: utf-8 -*-
 """
 author : Takahiro Suzuki
 date   : 2020/09/18
 description :
-this script detect human in image or not.
-you should note that we detect human by naive method.
+this script detect that human is in image or not.
+you should note that we detect human only by naive method.
 """
-
 import numpy as np
+import argparse
 import cv2
 
-COMMON_PATH = "drive/My Drive/Colab Notebooks/楽天サマーインターン/"
 
-# %matplotlib inline
+def output_formatter(detector):
+    """
+    this is a decoretor function.
+    enforce the format of following detectors' outsput.
 
-img_dir_path = os.path.join(COMMON_PATH, "dataset/")
-cascade_dir_path = os.path.join(COMMON_PATH, "haarcascades")
+    Parameter
+    -----------
+    detector : any detector
 
-path_list = glob(os.path.join(img_dir_path, "*.jpg"))
-img_list = [cv2.imread(path) for path in path_list]
+    Return
+    -----------
+    wrapper : detector whose output is reshaped.
+    """
 
-cascade_file_list = glob(os.path.join(cascade_dir_path, "*.xml"))
+    def wrapper(img: np.ndarray, cascade_path: str, color: tuple =(255, 0, 0)):
+        """
+        Parameter
+        -----------
+        img : ndarray image data.
+        cascade_path : pretrained cascade file path.
+        color : BGR values (B, G, R)
+
+        Return
+        -----------
+        img : image with boundingbox
+        mask : mask image which is created based on boundingbox
+        """
+        rect = detector(img, cascade_path)
+        mask = np.zeros_like(img)
+        for x, y, w, h in rect:
+            rect = [(x, y), (x + w, y), (x, y + h), (x + w, y + h)]
+            cv2.rectangle(img, (x, y), (x + w, y + h), color, 6)
+            cv2.rectangle(mask, (x, y), (x + w, y + h), (255, 255, 255), cv2.FILLED)
+        return img, mask
+
+    return wrapper
 
 
-img = cv2.cvtColor(img_list[4].copy(), cv2.COLOR_RGB2BGR)
-plt.figure(figsize=(8, 8))
-plt.imshow(img)
 
-cascade_file_list
+@output_formatter
+def detect_face(img: np.ndarray, face_cascade_path: str = "./haarcascade_frontalface_default.xml", ) -> list:
+    """
+    this is a face detector, and following function 'detect_eye' is very similar with this function (so I omitted doc string).
+    you should note that this function is decoreted by 'output_formatter' function.
 
-face_cascade_path = cascade_file_list[3]
-eye_cascade_path = cascade_file_list[-6]
-face_cascade = cv2.CascadeClassifier(face_cascade_path)
-eye_cascade = cv2.CascadeClassifier(eye_cascade_path)
+    Parameter
+    -----------
+    img : ndarray image data. PIL type image is not preferable (you will probably get an error).
+    face_cascade_path: pretrained cascade file path.
 
-src = img
-src_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    Return
+    -----------
+    faces : list of boundingboxes. each of them consists of upper left point's coordinate (x and y), width, and height.
+    """
+    face_cascade = cv2.CascadeClassifier(face_cascade_path)
+    gray_img = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2GRAY)
 
-faces = face_cascade.detectMultiScale(src_gray)
+    faces = face_cascade.detectMultiScale(gray_img, )
 
-for x, y, w, h in faces:
-    cv2.rectangle(src, (x, y), (x + w, y + h), (255, 0, 0), 2)
-    face = src[y: y + h, x: x + w]
-    face_gray = src_gray[y: y + h, x: x + w]
-    eyes = eye_cascade.detectMultiScale(face_gray)
-    for (ex, ey, ew, eh) in eyes:
-        cv2.rectangle(face, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+    return faces
 
-plt.imshow(src)
 
-faces
+@output_formatter
+def detect_eye(img: np.ndarray, eye_cascade_path: str = "./haarcascade_eye.xml") -> list:
+    eye_cascade = cv2.CascadeClassifier(eye_cascade_path)
+    gray_img = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2GRAY)
 
-for img in img_list:
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), cmap="gray")
-    plt.show()
-    sleep(1.0)
-    plt.close()
+    eyes = eye_cascade.detectMultiScale(gray_img, )
 
-??plt.show
+    return eyes
 
-a = plt.show()
 
-print(a)
+def detect_human(img: np.ndarray) -> bool:
+    """
+    this is a main function in this script.
+    detect humain is in image or not by the following steps.
+    STEP1: detect human face in the image or not, and if detected, we will use mask image later.
+    STEP2: detect human eye in the image or not, and if detected, we will use mask image later.
+    STEP3: by using obtained two mask images, we apply AND opperation to them.
+    STEP4: If output of AND opperation is black image, then we assume human not to be in the image, and vice versa.
 
+    Parameter
+    -----------
+    image : ndarray image data. PIL type image is not preferable (you will probably get an error).
+
+    Return
+    -----------
+    humanIsin : boolean. If human is in the image, then return True, otherwise False.
+    """
+    _, mask1 = detect_face(img, "./haarcascades/haarcascade_frontalface_default.xml")
+    _, mask2 = detect_eye(img, "./haarcascades/haarcascade_eye.xml")
+
+    dst = cv2.bitwise_and(mask1, mask2)
+    humanIsin = np.sum(dst) > 0
+    return humanIsin
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="This script detects human in image or not.\n You should note that we detect human by naive method."
+        )
+
+    parser.add_argument("image", help="image file path")
+    args = parser.parse_args()
+    image = cv2.imread(args.image)
+    humanIsin = detect_human(image)
+    print(humanIsin)
+
+if __name__ == "__main__":
+    main()
