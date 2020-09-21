@@ -15,7 +15,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
-from .serializer import HumanSerializer, AnimalSerializer
+from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer
 from .models import User, UserManager, Post, Type, Like
 # from image_processing.human_detection import detect_human
 
@@ -205,12 +205,23 @@ class GetFilteredPost(APIView): # typeが入っていないユーザーの投稿
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class PostLike(APIView):
-    def post(self, request):
-        try:
-            like = Like(post_id=request.data['post_id'], user_id=request.data['user_id'])
-            like.save()
-            return Response([request.data])
+class PostLike(generics.CreateAPIView):
+    """
+    author : Nakagaki Yuto
+    date   : 2020/09/18
+    About: You can post like.
+    Use Example:
+        headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}
+        data = {post_id': '1', 'user_id': '1'}
+    """
 
-        except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    permission_classes = (permissions.AllowAny,)
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
+
+    def post(self, request):
+        serializer = LikeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

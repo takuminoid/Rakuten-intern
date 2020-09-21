@@ -96,6 +96,11 @@ class Like(models.Model):
     post_id = models.ForeignKey('Post', on_delete=models.CASCADE)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
 
+    def create_like(self, post_id, user_id):
+        like = self.model(post_id=post_id, user_id=user_id)
+        like.save(using=self._db)
+        return post_id
+
 class Post(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
