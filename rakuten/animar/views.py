@@ -124,6 +124,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
 # ユーザ情報取得のView(GET)
 class GetAuthInfo(generics.RetrieveAPIView):
     '''
+    About: 送られたきたトークンを見てそのユーザーの情報を返す
     Use example:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
         r = requests.get('http://localhost:8000/api/user/', headers=headers)
@@ -141,7 +142,7 @@ class GetAuthInfo(generics.RetrieveAPIView):
             'name': request.user.name,
             'image': request.user.image.name, # パスを返す
             'sex': request.user.sex,
-            'type': request.user.type.name, # nameを返せばいい？
+            'type': request.user.type.name, # nameを返す
             'birthday': request.user.birthday,
             'residence': request.user.residence,
             'profile': request.user.profile,
@@ -151,6 +152,7 @@ class GetAuthInfo(generics.RetrieveAPIView):
 
 class GetUserInfo(APIView):
     '''
+    About: user_idを指定してユーザー情報を取得する
     Use Example:
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}} # 'Content-Type'を持たせると通らない？
         data = {'user_id': 'takumi'}
@@ -169,7 +171,7 @@ class GetUserInfo(APIView):
                 'name': user.name,
                 'image': user.image.name, # パスを返す
                 'sex': user.sex,
-                'type': user.type.name, # nameを返せばいい？
+                'type': user.type.name, # nameを返す
                 'birthday': user.birthday,
                 'residence': user.residence,
                 'profile': user.profile,
@@ -205,7 +207,7 @@ class GetAllPost(APIView):
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class GetFilteredPost(APIView): # typeが入っていないユーザーの投稿があると，エラーが出ます
+class GetFilteredPost(APIView):
     '''
     Author: Takumi Sato
     Data: 2020/09/18
@@ -220,15 +222,27 @@ class GetFilteredPost(APIView): # typeが入っていないユーザーの投稿
         try:
             req_type = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
             post = Post.objects.all()
-            post_resp = [
-                {'id': i.id,  # primary_key
-                 'user_id': i.user_id.user_id,
-                 'image': i.image.name, # パスを返す，例) "post_images/~~.png"
-                 'content': i.content,
-                 'like': Like.objects.filter(post_id=i.id).count()
-                 }
-                for i in post if User.objects.get(user_id=i.user_id.user_id).type.name==req_type # 設計書ではidと結び付けてるけどいい？
-            ]
+            # post_resp = [
+            #     {'id': i.id,  # primary_key
+            #      'user_id': i.user_id.user_id,
+            #      'image': i.image.name, # パスを返す，例) "post_images/~~.png"
+            #      'content': i.content,
+            #      'like': Like.objects.filter(post_id=i.id).count()
+            #      }
+            #     for i in post if User.objects.get(user_id=i.user_id.user_id).type.name==req_type # 設計書ではidと結び付けてるけどいい？
+            # ]
+            post_resp = []
+            for i in post:
+                user = User.objects.get(user_id=i.user_id.user_id)
+                if user.type is not None: # typeが入っていないユーザーの投稿があるとエラーが出るため
+                    if user.type.name == req_type:
+                        post_resp.append(
+                            {'id': i.id,  # primary_key
+                            'user_id': i.user_id.user_id,
+                            'image': i.image.name, # パスを返す，例) "post_images/~~.png"
+                            'content': i.content,
+                            'like': Like.objects.filter(post_id=i.id).count()
+                            })
             return Response(post_resp)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
