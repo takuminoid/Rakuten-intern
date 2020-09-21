@@ -92,12 +92,15 @@ class Type(models.Model):
     def __str__(self):
         return self.name
 
+
+# ValueError: Cannot assign "1": "Like.post_id" must be a "Post" instance.
+#外部キー関連のエラー？
 class Like(models.Model):
     post_id = models.ForeignKey('Post', on_delete=models.CASCADE)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
 
     def create_like(self, post_id, user_id):
-        like = self.model(post_id=post_id, user_id=user_id)
+        like = Like(post_id=post_id, user_id=user_id)
         like.save(using=self._db)
         return post_id
 

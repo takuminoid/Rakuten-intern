@@ -45,4 +45,4 @@ class LikeSerializer(serializers.ModelSerializer):
     def create(self, data):
         post_id = self.data['post_id']
         user_id = self.data['user_id']
-        return Like.objects.create_like(self, post_id=post_id, user_id=user_id)
+        return Like.create_like(self, post_id=post_id, user_id=user_id)
