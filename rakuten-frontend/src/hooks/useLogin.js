@@ -38,6 +38,7 @@ const useLogin = () => {
         })
         .then((resp) => {
             setToken(resp)
+            localStorage.setItem('token', resp)
         })
         .catch((e) => {
             return e
