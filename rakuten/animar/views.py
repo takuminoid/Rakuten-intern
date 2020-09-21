@@ -17,7 +17,7 @@ from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer
 from .models import User, UserManager, Post, Type, Like
-# from image_processing.human_detection import detect_human
+from image_processing.human_detection import detect_human
 
 
 
@@ -66,8 +66,7 @@ class PostAPI(APIView):
         image = request.data['image']
         content = request.data['content']
 
-        # TODO: 未実装なので実装をする
-        isinHuman = True #detect_human(image)
+        isinHuman = detect_human(image)
 
         if isinHuman:
             # TODO: レスポンスがこんな感じでいいのかを確認する
