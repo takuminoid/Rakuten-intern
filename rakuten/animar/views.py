@@ -122,7 +122,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ情報取得のView(GET)
-class GetUserInfo(generics.RetrieveAPIView):
+class GetAuthInfo(generics.RetrieveAPIView):
     '''
     Use example:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
@@ -149,6 +149,35 @@ class GetUserInfo(generics.RetrieveAPIView):
         },
             status=status.HTTP_200_OK)
 
+class GetUserInfo(APIView):
+    '''
+    Use Example:
+        headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}} # 'Content-Type'を持たせると通らない？
+        data = {'user_id': 'takumi'}
+        r = requests.get('http://localhost:8000/api/user/get/', data=data, headers=headers)
+        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '[暗号化されたパスワード]', 'name': None, 'image': 'user_images/~~.png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
+    '''
+    def get(self, request):
+        try:
+            user_id = request.data['user_id']
+            user = User.objects.get(user_id=user_id)
+            return Response(data={
+                'id': user.id,
+                'mail': user.mail,
+                'user_id': user.user_id,
+                'password': user.password,
+                'name': user.name,
+                'image': user.image.name, # パスを返す
+                'sex': user.sex,
+                'type': user.type.name, # nameを返せばいい？
+                'birthday': user.birthday,
+                'residence': user.residence,
+                'profile': user.profile,
+                'created_at': user.created_at,
+            },
+                status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetAllPost(APIView):
     '''
