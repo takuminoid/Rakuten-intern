@@ -32,11 +32,9 @@ const HumanForm = () => {
         setHumanState(HumanState)
     }
 
-    return {
-        handleChange, 
-        handleSubmit, 
-        state, 
-    }
+    // useEffect(async () => {
+        
+    // })
 }
 const AnimalForm = () => {
     const [state, setAnimalState] = useState(AnimalState)
@@ -70,6 +68,7 @@ const AnimalForm = () => {
 //         setState(initialState)
 //     }
 
+<<<<<<< HEAD
 //     return {
 //         handleChange, 
 //         handleSubmit, 
@@ -78,3 +77,6 @@ const AnimalForm = () => {
 // }
 export default HumanForm;
 export  { AnimalForm};
+=======
+export default useUser
+>>>>>>> origin/feature/frontend/viewProfile

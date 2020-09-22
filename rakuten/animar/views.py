@@ -6,6 +6,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User
+from django.contrib.auth import authenticate
+from django.db import transaction
+from django.http import HttpResponse, Http404
+from rest_framework import authentication, permissions, generics
+from rest_framework_jwt.settings import api_settings
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.response import Response
+from rest_framework import status, viewsets, filters
+from rest_framework.views import APIView
+from .serializer import UserSerializer
+from .models import User, UserManager
 
 
 class MainAPI(APIView):
@@ -13,7 +24,7 @@ class MainAPI(APIView):
         try:
             user = User.objects.all()
             user_resp = [
-                {'name': i.name, 
+                {'name': i.name,
                 'age': i.age
                 }
                 for i in user
@@ -21,7 +32,7 @@ class MainAPI(APIView):
             return Response(user_resp)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     def post(self, request):
         try:
             user = User(name=request.data['name'], age=request.data['age'])
@@ -30,3 +41,59 @@ class MainAPI(APIView):
 
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# ユーザ作成のView(POST)
+# 人間作成と動物作成のエンドポイントをわけて欲しい
+# 人間だったらこのまま、動物だったら必要な属性を持たせたものを別定義して欲しい
+class AuthRegister(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # data={
+        #     'mail': request.data['mail'],
+        #     'user_id': request.data['user_id'],
+        #     'password': request.data['password'],
+        #     # 'name': request.data['name'],
+        #     # 'image': request.data.image,
+        #     # 'sex': request.data.sex,
+        #     # 'type': request.data.type,
+        #     # 'birthday': request.data.birthday,
+        #     # 'residence': request.data.residence,
+        #     # 'profile': request.data.profile,
+        # }
+        # user = User(mail=data['mail'], user_id=data['user_id'], password=data['password'])
+        # user.save()
+        # return Response(data)
+
+# ユーザ情報取得のView(GET)
+class AuthInfoGetView(generics.RetrieveAPIView):
+    '''
+    この状態で、ヘッダーに{ 'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]' }を追加した上でGETメソッドを投げると、ログインしているユーザのusername/email/profileを取得することができます。
+    '''
+    # permission_classes = (permissions.IsAuthenticated,) # ログインしている状態でなければ取得できないようにする
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get(self, request, format=None):
+        return Response(data={
+            'id': request.user.id,
+            'mail': request.user.mail,
+            'user_id': request.user.user_id,
+            'password': request.user.password,
+            'name': request.user.name,
+            # 'image': request.user.image,
+            'sex': request.user.sex,
+            'type': request.user.type,
+            'birthday': request.user.birthday,
+            'residence': request.user.residence,
+            'profile': request.user.profile,
+            'created_at': request.user.created_at,
+            },
+            status=status.HTTP_200_OK)

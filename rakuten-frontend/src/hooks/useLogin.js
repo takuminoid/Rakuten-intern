@@ -4,7 +4,7 @@ import loginA from '../api/login'
 
 const initialState = {
     user_id: '', 
-    password: '',
+    password: ''
 }
 
 
@@ -38,6 +38,10 @@ const useLogin = () => {
         })
         .then((resp) => {
             setToken(resp)
+<<<<<<< HEAD
+=======
+            localStorage.setItem('token', resp.token)
+>>>>>>> origin/feature/frontend/viewProfile
         })
         .catch((e) => {
             return e
