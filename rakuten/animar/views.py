@@ -127,7 +127,7 @@ class GetAuthInfo(generics.RetrieveAPIView):
     Use example:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
         r = requests.get('http://localhost:8000/api/user/', headers=headers)
-        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '(暗号化されたパスワード)', 'name': None, 'image': 'user_images/~~.png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
+        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '(暗号化されたパスワード)', 'name': None, 'image': 'media/user_images/(暗号化?されたファイル名).png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
     '''
     queryset = User.objects.all()
     serializer_class = AnimalSerializer
@@ -139,7 +139,7 @@ class GetAuthInfo(generics.RetrieveAPIView):
             'user_id': request.user.user_id,
             'password': request.user.password,
             'name': request.user.name,
-            'image': request.user.image.name, # パスを返す
+            'image': request.user.image.url, # パスを返す
             'sex': request.user.sex,
             'type': request.user.type.name, # nameを返す
             'birthday': request.user.birthday,
@@ -156,7 +156,7 @@ class GetUserInfo(APIView):
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}} # 'Content-Type'を持たせると通らない？
         data = {'user_id': 'takumi'}
         r = requests.get('http://localhost:8000/api/user/get/', data=data, headers=headers)
-        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '[暗号化されたパスワード]', 'name': None, 'image': 'user_images/~~.png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
+        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '[暗号化されたパスワード]', 'name': None, 'image': 'media/user_images/(暗号化?されたファイル名).png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
     '''
     def get(self, request):
         try:
@@ -168,7 +168,7 @@ class GetUserInfo(APIView):
                 'user_id': user.user_id,
                 'password': user.password,
                 'name': user.name,
-                'image': user.image.name, # パスを返す
+                'image': user.image.url, # パスを返す
                 'sex': user.sex,
                 'type': user.type.name, # nameを返す
                 'birthday': user.birthday,
@@ -188,7 +188,7 @@ class GetAllPost(APIView):
     Use Exmple:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-TYpeがなくても通る
         r = requests.get('http://localhost:8000/api/getpost/', headers=headers)
-        r.json() # [{'id': 1, 'user_id': 'takumm', 'image': 'post_images/cutecat.png', 'content': 'こんにちは！私は猫です', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'content': 'hello, I am cat', 'like': 0}]
+        r.json() # [{'id': 1, 'user_id': 'takumm', 'image': 'media/post_images/(暗号化?されたファイル名).png', 'content': 'こんにちは！私は猫です', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'content': 'hello, I am cat', 'like': 0}]
     '''
     def get(self, request):
         try:
@@ -196,7 +196,7 @@ class GetAllPost(APIView):
             post_resp = [
                 {'id': i.id,  # primary_key
                  'user_id': i.user_id.user_id,
-                 'image': i.image.name, # パスを返す，例) "post_images/~~.png"
+                 'image': i.image.url, # パスを返す，例) "post_images/~~.png"
                  'content': i.content,
                  'like': Like.objects.filter(post_id=i.id).count()
                  }
@@ -215,7 +215,7 @@ class GetFilteredPost(APIView):
         data = {'name': '猫'}
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-Typeがあると通らない
         r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
-        r.json() # [{'id': 2, 'user_id': 'takumi', 'image': 'post_images/cutecat.png', 'content': 'hello, I am cat.', 'like': 0}]
+        r.json() # [{'id': 2, 'user_id': 'takumi', 'image': 'media/post_images/(暗号化?されたファイル名).png', 'content': 'hello, I am cat.', 'like': 0}]
     '''
     def get(self, request):
         try:
@@ -238,7 +238,7 @@ class GetFilteredPost(APIView):
                         post_resp.append(
                             {'id': i.id,  # primary_key
                             'user_id': i.user_id.user_id,
-                            'image': i.image.name, # パスを返す，例) "post_images/~~.png"
+                            'image': i.image.url, # パスを返す，例) "post_images/~~.png"
                             'content': i.content,
                             'like': Like.objects.filter(post_id=i.id).count()
                             })
