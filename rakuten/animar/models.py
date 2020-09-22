@@ -6,8 +6,10 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
+
 class CustomUserManager(UserManager):
     use_in_migrations = True
+
     def _create_user(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
 
         user = self.model(user_id=user_id, mail=mail, **extra_fields)
@@ -34,12 +36,13 @@ class CustomUserManager(UserManager):
         # return user
         return self._create_user(user_id, mail, password, **extra_fields)
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     # https://qiita.com/xKxAxKx/items/60e8fb93d6bbeebcf065
 
     id = models.AutoField(primary_key=True, unique=True)
     mail = models.EmailField(max_length=70)
-    user_id = models.CharField(max_length=255, unique=True) # 主キーは1つまでらしいからIDでやる、uniqueで制限をかける
+    user_id = models.CharField(max_length=255, unique=True)  # 主キーは1つまでらしいからIDでやる、uniqueで制限をかける
     name = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='user_images/')
     sex = models.IntegerField(blank=True, null=True)
@@ -86,23 +89,22 @@ class User(AbstractBaseUser, PermissionsMixin):
     #     db_table = 'animar_user'
     #     swappable = 'AUTH_USER_MODEL'
 
+
 class Type(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
 
-
-# ValueError: Cannot assign "1": "Like.post_id" must be a "Post" instance.
-#外部キー関連のエラー？
 class Like(models.Model):
     post_id = models.ForeignKey('Post', on_delete=models.CASCADE)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
 
     def create_like(self, post_id, user_id):
-        like = Like(post_id=post_id, user_id=user_id)
-        like.save(using=self._db)
+        like = Like(post_id = Post.objects.get(id=post_id), user_id=User.objects.get(id=user_id))
+        like.save()
         return post_id
+
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
