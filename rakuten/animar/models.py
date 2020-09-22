@@ -12,7 +12,7 @@ class CustomUserManager(UserManager):
 
     def _create_user(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
 
-        user = self.model(user_id=user_id, mail=mail, **extra_fields)
+        user = self.model(user_id=user_id, mail=mail, name=name, image=image, sex=sex, type=type, birthday=birthday, residence=residence, profile=profile, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user_id
