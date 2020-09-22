@@ -34,8 +34,8 @@ const Main = () => {
     const classes = signup_style();
     // Toggle UI
     const [showQestion, setshowQestion] = useState(false)
-    const [showHumanForm, setshowHumanForm] = useState(false)
-    const [ShowAnimalForm, setShowAnimalForm] = useState(true)
+    const [showHumanForm, setshowHumanForm] = useState(true)
+    const [ShowAnimalForm, setShowAnimalForm] = useState(false)
     const [loading, setLoading] = useState(true) // Todo 遅延処理導入
 
 
@@ -48,7 +48,8 @@ const Main = () => {
     } 
     const QestionSubmit = () => {
         setShowAnimalForm(true)
-
+        setshowHumanForm(false)
+        setshowQestion(false)
 
     } 
 

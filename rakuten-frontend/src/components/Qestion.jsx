@@ -16,7 +16,7 @@ import {
     createMuiTheme,
   } from '@material-ui/core/styles';
 
-const Qestion= ({signup_style,Submit}) =>  {
+const Qestion= ({signup_style,QestionSubmit}) =>  {
     const classes = signup_style();
     const history = useHistory();
     // human
@@ -38,7 +38,7 @@ const Qestion= ({signup_style,Submit}) =>  {
 
     const onSubmit = e => {
         e.preventDefault()
-        Submit()
+        QestionSubmit()
          
     } 
 
