@@ -38,10 +38,7 @@ const useLogin = () => {
         })
         .then((resp) => {
             setToken(resp)
-<<<<<<< HEAD
-=======
             localStorage.setItem('token', resp.token)
->>>>>>> origin/feature/frontend/viewProfile
         })
         .catch((e) => {
             return e

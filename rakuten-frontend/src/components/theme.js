@@ -10,6 +10,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import GlobalStyle from "./globalstyle";
 import {
     fade,
     MuiThemeProvider,
@@ -19,7 +20,7 @@ import {
     createMuiTheme,
   } from '@material-ui/core/styles';
 
-
+const font = "'Lato', sans-serif"; 
 // SignUp Theme not base theme
 const themeSignUp = createMuiTheme({
     palette: {
@@ -40,6 +41,58 @@ const themeSignUp = createMuiTheme({
       background: {
         default: "#D97D54"
       },
+      text: {
+        primary: "#324755",
+        // secondary: "#ffffff",
+      },
+      overrides: {
+        MuiOutlinedInput: {
+            root: {
+                '& $notchedOutline': {
+                    border: '0px',
+                },
+                '&:hover:not($disabled):not($focused):not($error) $notchedOutline': {
+                    border: '0px',
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        border: '0px',
+                    },
+                },
+                '&$focused $notchedOutline': {
+                    border: '0px',
+                    borderWidth: 0,
+                },
+            },
+        },}
+ 
+ 
+  }});
+// Main Theme 
+const Maintheme = createMuiTheme({
+    palette: {
+    primary: {
+        light: '#87BCBF',
+        main: '#FFFFFF',
+        dark: '#324755',
+        contrastText: '#D97D54',
+        },
+        secondary: {
+        light: '#FFFFFF',
+        main: '#D97D54',
+        dark: '#1B1C20',
+        contrastText: '#FFFFFF',
+        },
+        textPrimary: {
+        default: "#fff"
+        ,fontFamily:" 'Roboto' ,'Semi-bold ",
+        },
+        textSecondary: { default: "#324755"  
+        ,fontFamily: " 'Roboto' ,'Semi-bold ",
+      
+      },
+        background: {
+          default: "#FFFFFF"
+        },
       text: {
         primary: "#324755",
         // secondary: "#ffffff",
@@ -128,4 +181,4 @@ const signup_style = makeStyles((theme) => ({
       }
   }));
 export default themeSignUp;
-export  {signup_style};
+export  {signup_style,Maintheme};

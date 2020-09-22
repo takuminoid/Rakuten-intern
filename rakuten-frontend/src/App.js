@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import Main from '../src/components/Main'
+import Home from '../src/components/Home'
 import Login from '../src/components/Login'
 import SignUp from '../src/components/SignUp'
 import viewProfile from '../src/components/ViewProfile'
@@ -13,7 +13,7 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-          <Route exact path="/main" component={Main} />
+          <Route exact path="/main" component={Home} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={SignUp} />
           <Route exact path="/viewProfile" component={viewProfile} />
