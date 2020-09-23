@@ -233,9 +233,8 @@ class GetFilteredPost(APIView):
         r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
         r.json() # [{'id': 2, 'user_id': 'takumi', 'user_image': '/media/user_images/SATO_IMAGE%E3%81%AE%E3%82%B3%E3%83%92%E3%83%BC.jpg', 'image': '/media/post_images/sato_image.jpg', 'content': 'me', 'like': 0, 'is_liked': False}]
     '''
-    def get(self, request):
+    def get(self, request, tname):
         try:
-            req_type = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
             post = Post.objects.all()
             current_user_id = request.user.id
             post_resp = []
@@ -247,7 +246,7 @@ class GetFilteredPost(APIView):
                     is_liked = False
                 user = User.objects.get(user_id=i.user_id.user_id)
                 if user.type is not None: # typeが入っていないユーザーの投稿があるとエラーが出るため
-                    if user.type.name == req_type:
+                    if user.type.name == tname:
                         try:
                             image_url = i.user_id.image.url
                         except:

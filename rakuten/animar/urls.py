@@ -13,5 +13,5 @@ urlpatterns = [
     path('user/get/<str:user_id>/', GetUserInfo.as_view()),
     url(r'getpost/$', GetAllPost.as_view()),
     url(r'like/$', PostLike.as_view()),
-    url(r'getfilteredpost/$', GetFilteredPost.as_view()),
+    path('getpost/filter/<str:tname>/', GetFilteredPost.as_view()),
 ]
