@@ -54,9 +54,11 @@ const AnimalFormUI= ({signup_style}) =>  {
     useEffect(() => {
         console.log(state);
         }, [state]);
+
+
+    // アバター画像にプレビューを表示するために　filesにURLを取り込むためのもの
     const [files, setFiles] = useState([]);
     const [open, setOpen] = useState(false);
-
     const handleSave = (acceptedFiles) => {
         console.log('handleSave');
         // previewの追加

@@ -1,4 +1,4 @@
-import React, {useState, useEffect ,useRef, useCallback} from 'react'
+import React, {useState, useEffect ,useRef, Fragment,useCallback} from 'react'
 import { Waypoint } from 'react-waypoint';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -28,13 +28,30 @@ import AddIcon from '@material-ui/icons/Add';
 import HomeIcon from '@material-ui/icons/Home';
 import PetsIcon from '@material-ui/icons/Pets';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import {Maintheme} from './theme';
+import {PostForm} from '../hooks/useUser';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import getAnimal from '../api/getAnimal' 
+
 import {
     fade,
     MuiThemeProvider,
     ThemeProvider,
     withStyles,
     createMuiTheme,} from '@material-ui/core/styles';
+import { DropzoneArea } from 'material-ui-dropzone';
+
+
+
+
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -95,13 +112,68 @@ const useStyles = makeStyles((theme) => ({
       },
   }));
 const Home = () => {
+    const {
+        handleContentChange, 
+        handleSubmit, handleImgChange,handl_user_idChange, 
+        state
+    } = PostForm()
+
+    // const onChange = e => {
+    //     console.log(state.password);
+    //     console.log(state.email);
+
+    //     handleContentChange(e)
+    //     setErrorMessage(null)
+
+
+
+
     const classes = useStyles();
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(false)
-    const [Posts, setPosts] = useState([])
-    const [hasMore, setHasMore] = useState(false)
-    const [page, setpage] = useState(1)
-    const dom = Posts
+    const [Posts, setPosts] = useState([]) // レンダーするpostデータ
+    const [page, setpage] = useState(1) //ページ番号
+
+    var Post_data = {
+        images: [],
+        content: []
+    };
+    // postダイアログのsate
+    const [open, setOpen] = React.useState(false);
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+    const handleClose = () => {
+      setOpen(false);
+    };
+    const onPostChange = e => {
+        handleContentChange(e.target.value)
+        Post_data.content= e.target.value
+
+    }
+    const handlePostSubmmit =(e)=> {
+        e.preventDefault();
+        // handl_user_idChange(getAnimal().user_id)
+
+        handleClose();
+        handleSubmit(state)
+    };
+
+    // 画像アップロード
+    const handleCapture = ({ target }) => {
+        const fileReader = new FileReader();
+        const name = target.accept.includes('image') ? 'images' : 'videos';
+
+        fileReader.readAsDataURL(target.files[0]);
+        fileReader.onload = (e) => {
+            handleImgChange(e.target.result);
+
+            // setimage(e.target.result);
+            // Post_data.images=e.target.result
+
+        }
+
+
+    };
 
     const onChange =  async() => {
         setLoading(true)
@@ -196,6 +268,56 @@ const Home = () => {
                     );
                     });
       }
+    const _openPostDialog= function() {
+        return(
+            <div>
+            <form  onSubmit={handlePostSubmmit} className={classes.form,classes.sign_in_card} >
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+              <DialogTitle id="form-dialog-title">Posts</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  To subscribe to this website, please enter your email address here. We will send updates
+                  occasionally.
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="content"
+                  label="content"
+                  type="content"
+                  value={state.content} 
+                  onChange={onPostChange}
+                  placeholder="I am cat cataaafajfoijeoijfa cata aafafefa"
+                  fullWidth
+                />
+              </DialogContent>
+              <Fragment>
+                <input
+                    accept="image/*"
+                    className={classes.input}
+                    id="icon-button-photo"
+                    onChange={handleCapture}
+                    type="file"
+                />
+                <label htmlFor="icon-button-photo">
+                    <IconButton color="primary" component="span">
+                        <PhotoCamera />
+                    </IconButton>
+                </label>
+            </Fragment>
+              <DialogActions>
+                <Button type="button" onClick={handleClose} color="inherit">
+                  Cancel
+                </Button>
+                <Button  type="submit" onClick={handlePostSubmmit} color="secondary">
+                  Subscribe
+                </Button>
+              </DialogActions>
+            </Dialog>
+            </form>
+          </div>
+          )
+      }
     // const data =getAnimal() dom.map(u => ( <User {...u} /> ))
     // console.log(posts);
     return (
@@ -208,8 +330,9 @@ const Home = () => {
                     Animar
                 </Typography>
                 </   AppBar>
+                <_openPostDialog />
+
                 <_renderItems />
-            
                 <Waypoint onEnter={onChange} />
 
                 {loading ? (<h1>Loading</h1>) : <div></div>}
@@ -219,7 +342,7 @@ const Home = () => {
                         <IconButton  color="inherit" aria-label="open drawer"  >
                             <HomeIcon />
                         </IconButton>
-                        <Fab color="secondary" aria-label="add" className={classes.fabButton} >
+                        <Fab color="secondary" aria-label="add" className={classes.fabButton} onClick={handleClickOpen} >
                             <AddIcon />
                         </Fab>
                         <div className={classes.grow} />
