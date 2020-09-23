@@ -30,6 +30,8 @@ class PostAPI(APIView):
     description :
     process HTTP POST request.
     """
+    permission_classes = (permissions.AllowAny,)
+
 
     def post(self, request):
         """
@@ -41,7 +43,6 @@ class PostAPI(APIView):
         """
 
         try:
-            id = request.data['id']
             user_id = request.data['user_id']
             image = request.data['image']
             content = request.data['content']
@@ -53,7 +54,7 @@ class PostAPI(APIView):
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 user = User.objects.get(user_id=user_id)
-                post_db = Post(id=id, user_id=user, image=image, content=content)
+                post_db = Post(user_id=user, image=image, content=content)
                 post_db.save()
                 return Response([request.data])
         except:
