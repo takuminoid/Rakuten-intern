@@ -101,6 +101,9 @@ const useStyles = makeStyles((theme) => ({
         margin: '0 auto',
       },
   }));
+
+
+
 const Home = () => {
     const classes = useStyles();
     const [loading, setLoading] = useState(true)
@@ -144,37 +147,75 @@ const Home = () => {
         p()
     }, [])
 
-    const incrementGood = (id) => Posts[id-1].like += 1
-    const decrementGood = (id) => Posts[id-1].like -= 1
+    // const incrementGood = (id) => Posts[id-1].like += 1
+    // const decrementGood = (id) => Posts[id-1].like -= 1
+    // const handleGood = async (id, good) => {
+    //     const uid = user.user_id
+    //     const goodRequest = good 
+    //     ? DeleteLike(id, uid) 
+    //     : CreateLike(id, uid)
+    //     goodRequest
+    //     .then(() => {
+    //         good ? (
+    //             decrementGood(id)
+    //         ) : (
+    //             incrementGood(id)
+    //         )
+    //     })
+    //     .catch((e) => {
+    //         throw new Error(e)
+    //     })
+    // }
 
-    // ステートの更新まで実装
-    
-    const handleGood = async (id, good) => {
-        const uid = user.user_id
-        const goodRequest = good 
-        ? DeleteLike(id, uid) 
-        : CreateLike(id, uid)
-        goodRequest
-        .then(() => {
-            good ? (
-                decrementGood(id)
-            ) : (
-                incrementGood(id)
-            )
+    // useEffect(() => {
+    //     setPosts(Posts)
+    // }, [Posts])
+
+    const gooded = async (post) => {
+        const l = []
+        post.map(i => {
+            l.push(i)
         })
-        .catch((e) => {
-            throw new Error(e)
-        })
+        return l
     }
-
-    useEffect(() => {
-        setPosts(Posts)
-    }, [Posts])
 
     const _renderItems = () => {
         const domain = 'http://localhost:8000'
+        const incrementGood = (id) => Posts[id-1].like += 1
+        const decrementGood = (id) => Posts[id-1].like -= 1
+        const handleGood = async (id, good) => {
+            const uid = user.user_id
+            const goodRequest = good 
+            ? DeleteLike(id, uid) 
+            : CreateLike(id, uid)
+            goodRequest
+            .then(() => {
+                good ? (
+                    decrementGood(id)
+                ) : (
+                    incrementGood(id)
+                )
+                gooded(Posts)
+                .then((g) => {
+                    setPosts(g)
+                })
+                .catch(e => {
+                    throw new Error(e)
+                })
+            })
+            .catch((e) => {
+                throw new Error(e)
+            })
+        }
+
+        useEffect(() => {
+            setPosts(Posts)
+        }, [Posts])
+
+        // ちょっとめんどくさいけど別のコンポーネントにしてもいいかもしれない``
         return Posts.map(function(p) {
             const goodYet = p.user_id === 'takurinton' ? true : false // ここをfavoriteに変更
+            // 上の変更が下のコンポーネントまで届いてないのでそこを修正する
           return (
               <div >
             {/* <img
@@ -187,7 +228,7 @@ const Home = () => {
               <p>{imageUrl.tags} </p>
               <p>{imageUrl.likes} </p> */}
 
-            <Card className={classes.root}>
+            <Card className={classes.root} key={p.id}>
                 {/* <CardHeader
                     avatar={
                     <Avatar aria-label="recipe" src={imageUrl.userImageURL} className={classes.avatar}>
@@ -257,6 +298,7 @@ const Home = () => {
                 </Typography>
                 </   AppBar>
                 <_renderItems />
+                {/* {Posts.map((p) => (<PostContent p={p} />))} */}
             
                 {/* <Waypoint onEnter={onChange} /> */}
 
@@ -282,5 +324,8 @@ const Home = () => {
         </div>
     )
 }
+
+
+
 
 export default Home 
