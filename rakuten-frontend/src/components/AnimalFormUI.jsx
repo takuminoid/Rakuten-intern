@@ -75,8 +75,8 @@ const AnimalFormUI= ({signup_style}) =>  {
         const fileReader = new FileReader();
         console.log();
         const name = target.accept.includes('image') ? 'images' : 'videos';
-        setFiles(URL.createObjectURL(target.files[0]))
-        fileReader.readAsDataURL(target.files[0]);
+        setFiles(URL.createObjectURL(target.files[0])) // blob取り込み
+        fileReader.readAsDataURL(target.files[0]); // blobをbase64へ
 
         fileReader.onload = (e) => {
             handleImgChange(e.target.result);
