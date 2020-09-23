@@ -51,8 +51,8 @@ const HumanFormUI= ({signup_style,humanSubmit}) =>  {
         humanSubmit() // 親子コンポーネントのstate処理
     } 
     const handleToLogin = () => {
-        postHuman(JSON.parse(localStorage.getItem('userinfo')))
-        localStorage.removeItem('userinfo')
+        //postHuman(JSON.parse(localStorage.getItem('userinfo')))
+        //localStorage.removeItem('userinfo')
         history.push('/login')
       }
     // const onSubmit = data => console.log(data);

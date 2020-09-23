@@ -37,7 +37,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import {Maintheme} from './theme';
 import {PostForm} from '../hooks/useUser';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import getAnimal from '../api/getAnimal'
+import getAnimal,{getOtherAnimal} from '../api/getAnimal'
+
 import {
     fade,
     MuiThemeProvider,
@@ -105,6 +106,8 @@ import {
             margin: '0 auto',
           },
       }));
+
+
 //TODO show image
 const User = ({name, sex, type, birthday, residence, profile}) => {
     return (
