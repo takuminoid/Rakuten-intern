@@ -143,15 +143,24 @@ class GetUserInfo(APIView):
         try:
             user_id = request.data['user_id']
             user = User.objects.get(user_id=user_id)
+            try:
+                type_name = user.type.name
+            except:
+                type_name = None
+
+            try:
+                image_url = user.image.url
+            except:
+                image_url = None
             return Response(data={
                 'id': user.id,
                 'mail': user.mail,
                 'user_id': user.user_id,
                 'password': user.password,
                 'name': user.name,
-                'image': user.image.url, # パスを返す
+                'image': image_url, # パスを返す
                 'sex': user.sex,
-                'type': user.type.name, # nameを返す
+                'type': type_name, # nameを返す
                 'birthday': user.birthday,
                 'residence': user.residence,
                 'profile': user.profile,
