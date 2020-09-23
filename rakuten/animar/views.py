@@ -205,20 +205,25 @@ class GetAllPost(APIView):
     Use Exmple:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-TYpeがなくても通る
         r = requests.get('http://localhost:8000/api/getpost/', headers=headers)
-        r.json() # [{'id': 1, 'user_id': 'takumm', 'image': 'media/post_images/(暗号化?されたファイル名).png', 'content': 'こんにちは！私は猫です', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'content': 'hello, I am cat', 'like': 0}]
+        r.json() # [{'id': 1, 'user_id': 'takumm', 'user_image': '/media/user_images/~~.png', 'image': '/media/post_images/(暗号化?されたファイル名).png', 'content': 'こんにちは！私は猫です', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'user_image':'/media/user_images/48944b4a-5f97-4d9e-910b-9139727e6d59.jpg', 'image': '/media/post_images/08_%E3%82%A8%E3%82%BF%E3%83%9E%E3%83%A1.png', 'content': 'hello, I am cat', 'like': 0}]
     '''
     def get(self, request):
         try:
             post = Post.objects.all()
-            post_resp = [
-                {'id': i.id,  # primary_key
-                 'user_id': i.user_id.user_id,
-                 'image': i.image.url, # パスを返す，例) "post_images/~~.png"
-                 'content': i.content,
-                 'like': Like.objects.filter(post_id=i.id).count()
-                 }
-                for i in post
-            ]
+            post_resp = []
+            for i in post:
+                try:
+                    image_url = i.user_id.image.url
+                except:
+                    image_url = None
+                post_resp.append(
+                    {'id': i.id,  # primary_key
+                    'user_id': i.user_id.user_id,
+                    'user_image': image_url,
+                    'image': i.image.url, # パスを返す，例) "post_images/~~.png"
+                    'content': i.content,
+                    'like': Like.objects.filter(post_id=i.id).count()
+                    })
             return Response(post_resp)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -233,29 +238,25 @@ class GetFilteredPost(APIView):
         data = {'name': '猫'}
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-Typeがあると通らない
         r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
-        r.json() # [{'id': 2, 'user_id': 'takumi', 'image': 'media/post_images/(暗号化?されたファイル名).png', 'content': 'hello, I am cat.', 'like': 0}]
+        r.json() # [{'id': 2, 'user_id': 'takumi', 'user_image': '/media/user_images/SATO_IMAGE%E3%81%AE%E3%82%B3%E3%83%92%E3%83%BC.jpg', 'image': '/media/post_images/sato_image.jpg', 'content': 'me', 'like': 0}]
     '''
     def get(self, request):
         try:
             req_type = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
             post = Post.objects.all()
-            # post_resp = [
-            #     {'id': i.id,  # primary_key
-            #      'user_id': i.user_id.user_id,
-            #      'image': i.image.name, # パスを返す，例) "post_images/~~.png"
-            #      'content': i.content,
-            #      'like': Like.objects.filter(post_id=i.id).count()
-            #      }
-            #     for i in post if User.objects.get(user_id=i.user_id.user_id).type.name==req_type # 設計書ではidと結び付けてるけどいい？
-            # ]
             post_resp = []
             for i in post:
                 user = User.objects.get(user_id=i.user_id.user_id)
                 if user.type is not None: # typeが入っていないユーザーの投稿があるとエラーが出るため
                     if user.type.name == req_type:
+                        try:
+                            image_url = i.user_id.image.url
+                        except:
+                            image_url = None
                         post_resp.append(
                             {'id': i.id,  # primary_key
                             'user_id': i.user_id.user_id,
+                            'user_image': image_url,
                             'image': i.image.url, # パスを返す，例) "post_images/~~.png"
                             'content': i.content,
                             'like': Like.objects.filter(post_id=i.id).count()
@@ -298,4 +299,3 @@ class PostLike(generics.CreateAPIView):
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
