@@ -92,14 +92,14 @@ class AuthRegisterHuman(generics.CreateAPIView):
         # return Response(data)
 
 
-class AuthRegisterAnimal(generics.CreateAPIView): # imageはもうすぐ追加
+class AuthRegisterAnimal(generics.CreateAPIView):
     '''
     Use Example:
-        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi', 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
+        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': (base64文字列), 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
         r = requests.post('http://localhost:8000/api/register/animal/', data=data)
         r.json() # {'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'name': 'osushi', 'image': None, 'sex': 0, 'type': 4, 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test'}
         r2 = requests.get('http://localhost:8000/api/user/get/', data={'user_id': 'kanemura'})
-        r2.json() # {'id': 5, 'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'password': 'pbkdf2_sha256$216000$s7zFVvsVI48v$nSNPQbPA5gljV+/awts1RGnInZUDFukBbjyeKEVCzEQ=', 'name': 'osushi', 'image': None, 'sex': 0, 'type': 'cat', 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test', 'created_at': '2020-09-23T03:50:31.981850Z'} # ユーザーテーブルに登録されている
+        r2.json() # {'id': 5, 'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'password': '(暗号化されたパスワード)', 'name': 'osushi', 'image': '/media/user_images/48944b4a-5f97-4d9e-910b-9139727e6d59.jpg', 'sex': 0, 'type': 'cat', 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test', 'created_at': '2020-09-23T03:50:31.981850Z'} # ユーザーテーブルに登録されている
     '''
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
@@ -120,9 +120,6 @@ class AuthRegisterAnimal(generics.CreateAPIView): # imageはもうすぐ追加
         if data['image'] is not None:
             format, imgstr = data['image'].split(";base64,")
             data['image'] = imgstr
-        #     ext = format.split("/")[-1]
-        #     data['image'] = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
-        # return Response(data['image'])
         serializer = AnimalSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
