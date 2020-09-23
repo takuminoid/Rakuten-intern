@@ -7,7 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import RedditTextField from './RedditTextField'
+
 import postHuman,{postAnimal}  from '../api/postUserAPI'
+
 import {
     fade,
     MuiThemeProvider,
