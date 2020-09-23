@@ -252,9 +252,10 @@ class PostLike(generics.CreateAPIView):
     date   : 2020/09/18
     About: You can post like.
     Use Example:
-        data = {post_id': '1', 'user_id': '1'}
+        data = {'post_id': '1', 'user_id': '1'}
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}
-        r = requests.get('http://localhost:8000/api/like/', data=data, headers=headers)
+        r = requests.post('http://localhost:8000/api/like/', data=data, headers=headers)
+        r.json() # [{'post_id': 1, 'user_id': 1}]
     """
 
     permission_classes = (permissions.AllowAny,)
