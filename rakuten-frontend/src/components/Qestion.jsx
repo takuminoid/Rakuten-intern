@@ -8,8 +8,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import RedditTextField from './RedditTextField'
 
-import postHuman,{loginA}  from '../api/postUserAPI'
-import loginForSignup from '../api/login'
+import postHuman,{postAnimal}  from '../api/postUserAPI'
 
 import {
     fade,
@@ -34,28 +33,10 @@ const Qestion= ({signup_style,QestionSubmit}) =>  {
         showAnimalSignUp:false, //To show " SignUp of Animal "
       });
 
-
     const handleToFeed = () => {
-
         postHuman(JSON.parse(localStorage.getItem('userinfo')))
-        .then((u) => {
-            loginForSignup(JSON.parse(localStorage.getItem('loginInfo')))
-            localStorage.removeItem('userinfo')
-            localStorage.removeItem('loginInfo')
-            history.push('/main')
-            setLoading(false)
-        })
-        .catch((e) => {
-            throw new Error(e)
-        })
-        /*
-        const Log  = function loginUser(){
-            loginForSignup(JSON.parse(localStorage.getItem('loginInfo')))
-            localStorage.removeItem('loginInfo')
-        }
-        setTimeout(Log, 1000)
-        */
-        
+        localStorage.removeItem('userinfo')
+        history.push('/main')
       }
 
 
