@@ -94,7 +94,17 @@ class AuthRegisterAnimal(generics.CreateAPIView):
     serializer_class = AnimalSerializer
 
     def post(self, request, format=None):
-        serializer = AnimalSerializer(data=request.data)
+        data = request.data.copy()
+        if data['type'] is not None: # typeは外部キーなので，Primary Keyを渡す必要がある
+            type_name = data['type']
+            type = Type.objects.filter(name=type_name)
+            if type.count() > 0 :
+                data['type'] = type.first().id
+            else: # typeが登録されていなかった場合は登録
+                typeob = Type(name=type_name)
+                typeob.save()
+                data['type'] = typeob.id
+            serializer = AnimalSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

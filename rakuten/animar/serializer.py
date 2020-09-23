@@ -1,7 +1,7 @@
 from django.contrib.auth import update_session_auth_hash
 from rest_framework import serializers
 
-from .models import User, UserManager, Like
+from .models import User, UserManager, Like, Type
 
 class HumanSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
@@ -29,7 +29,7 @@ class AnimalSerializer(serializers.ModelSerializer):
         password = data['password']
         name = self.data['name']
         sex = self.data['sex']
-        type = self.data['type']
+        type = Type(id=self.data['type'])
         image = self.data['image']
         birthday = self.data['birthday']
         residence = self.data['residence']
@@ -37,7 +37,6 @@ class AnimalSerializer(serializers.ModelSerializer):
         return User.objects.create_user(mail=mail, user_id=user_id, password=password, name=name, sex=sex, type=type, birthday=birthday, residence=residence, profile=profile)
 
 class LikeSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Like
         fields = ('post_id', 'user_id')
