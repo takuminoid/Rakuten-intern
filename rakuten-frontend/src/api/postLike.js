@@ -3,8 +3,7 @@ import toJson from '../toJson/toJson'
 var token = localStorage.getItem('token')
 
 export const CreateLike = async (pid, uid) => {
-    const body = { post_id: pid, user_id: uid }
-    console.log(body)
+    const body = { post_id: pid, user_id: 1 }
     const resp = await fetch(`http://localhost:8000/api/like/`, {
         method: "POST",
         credentials: "same-origin",

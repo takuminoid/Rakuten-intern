@@ -179,6 +179,8 @@ const Home = () => {
         return l
     }
 
+    // TODO 2回連続いいねがされた時の制限の掛け方を考える
+    // TODO takurintonとhogeのところをtrue/falseに変更する
     const _renderItems = () => {
         const domain = 'http://localhost:8000'
         const incrementGood = (id) => { 
@@ -219,10 +221,9 @@ const Home = () => {
             setPosts(Posts)
         }, [Posts])
 
-        // ちょっとめんどくさいけど別のコンポーネントにしてもいいかもしれない``
         return Posts.map(function(p) {
-            const goodYet = p.user_id === 'takurinton' ? true : false // ここをfavoriteに変更
-            // 上の変更が下のコンポーネントまで届いてないのでそこを修正する
+            // TODO ここをtrue/falseに変更する
+            const goodYet = p.user_id === 'takurinton' ? true : false 
           return (
               <div >
             {/* <img
@@ -331,8 +332,5 @@ const Home = () => {
         </div>
     )
 }
-
-
-
 
 export default Home 
