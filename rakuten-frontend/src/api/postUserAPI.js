@@ -31,6 +31,18 @@ const postAnimal = async (body) => {
     
     return toJson(resp)
 }
+const postPost = async (body) => { 
+    const resp = await fetch(`http://localhost:8000/api/post/`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: "same-origin",
+        body: JSON.stringify(body), 
+    })
+    
+    return toJson(resp)
+}
 
 export default postHuman
-export {postAnimal} 
+export {postAnimal,postPost} 

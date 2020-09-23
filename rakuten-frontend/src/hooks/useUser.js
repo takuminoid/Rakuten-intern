@@ -1,6 +1,6 @@
 import React, {useEffect, useState } from 'react'
-
-import postHuman,{postAnimal}  from '../api/postUserAPI'
+import getAnimal from '../api/getAnimal' 
+import postHuman,{postAnimal,postPost}  from '../api/postUserAPI'
 const initialState = {
     name: null, 
     age: null,
@@ -21,6 +21,12 @@ const AnimalState = {
     // password: null,
     image:null,
     profile:null,
+}
+
+const PostState = {
+    user_id: null,
+    image:null,
+    content:null,
 }
 const HumanForm = () => {
     const [state, setHumanState] = useState(HumanState)
@@ -62,6 +68,38 @@ const AnimalForm = () => {
         state, handleImgChange
     }
 }
+const PostForm = () => {
+    const [state, setPostState] = useState(PostState)
+
+    //
+    function handleContentChange(text)  {
+        setPostState({...state, ["content"]:text })
+    }
+    function handleImgChange(img) {
+        // setPostState({ ...state, ["content"]:" data.content "}) // TODO Base64？？　or そのまま？？
+        setPostState({ ...state, ["image"]: img}) // TODO Base64？？　or そのまま？？
+    }
+    function handl_user_idChange(user_id) {
+        // setPostState({ ...state, ["content"]:" data.content "}) // TODO Base64？？　or そのまま？？
+        setPostState({ ...state, ["user_id"]: user_id}) // TODO Base64？？　or そのまま？？
+    }
+    const handleSubmit = (body) => {
+        // stateをbodyにのせて渡すだけでよい
+        setPostState({ ...state, ["user_id"]: getAnimal().user_id }) 
+        // console.log("state");
+        // console.log(state);
+        postPost(state)
+
+
+        setPostState(PostState)
+    }
+
+    return {
+        handleContentChange, 
+        handleSubmit, handleImgChange,handl_user_idChange, 
+        state
+    }
+}
 // const UserForm = () => {
 //     const [state, setState] = useState(initialState)
 
@@ -81,4 +119,4 @@ const AnimalForm = () => {
 //     }
 // }
 export default HumanForm;
-export  { AnimalForm};
+export  { AnimalForm,PostForm};

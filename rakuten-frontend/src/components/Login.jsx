@@ -30,6 +30,15 @@ const Login = () => {
         handleChange, 
         handleSubmit, 
     } = useLogin()
+
+    const onChange = e => {
+        handleChange(e)
+    }
+    const onSubmit = e => {
+        e.preventDefault()
+        handleSubmit(state)
+    } 
+    
     return (
         <Container component="main" maxWidth="false"> 
         <MuiThemeProvider theme={themeSignUp}>
