@@ -60,10 +60,7 @@ class PostAPI(APIView):
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 # ユーザ作成のView(POST)
-
-
 class AuthRegisterHuman(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
@@ -75,22 +72,6 @@ class AuthRegisterHuman(generics.CreateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        # data={
-        #     'mail': request.data['mail'],
-        #     'user_id': request.data['user_id'],
-        #     'password': request.data['password'],
-        #     # 'name': request.data['name'],
-        #     # 'image': request.data.image,
-        #     # 'sex': request.data.sex,
-        #     # 'type': request.data.type,
-        #     # 'birthday': request.data.birthday,
-        #     # 'residence': request.data.residence,
-        #     # 'profile': request.data.profile,
-        # }
-        # user = User(mail=data['mail'], user_id=data['user_id'], password=data['password'])
-        # user.save()
-        # return Response(data)
-
 
 class AuthRegisterAnimal(generics.CreateAPIView):
     '''
@@ -197,7 +178,6 @@ class GetUserInfo(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetAllPost(APIView):
-    # permission_classes = (permissions.AllowAny,)
     '''
     Author: Takumi Sato
     Date: 2020/09/18
@@ -205,7 +185,7 @@ class GetAllPost(APIView):
     Use Exmple:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-TYpeがなくても通る
         r = requests.get('http://localhost:8000/api/getpost/', headers=headers)
-        r.json() # [{'id': 1, 'user_id': 'takumm', 'user_image': '/media/user_images/~~.png', 'image': '/media/post_images/(暗号化?されたファイル名).png', 'content': 'こんにちは！私は猫です', 'like': 0}, {'id': 2, 'user_id': 'takumi', 'user_image':'/media/user_images/48944b4a-5f97-4d9e-910b-9139727e6d59.jpg', 'image': '/media/post_images/08_%E3%82%A8%E3%82%BF%E3%83%9E%E3%83%A1.png', 'content': 'hello, I am cat', 'like': 0}]
+        r.json() # [{'id': 1, 'user_id': 'takumm', 'user_image': '/media/user_images/~~.png', 'image': '/media/post_images/(暗号化?されたファイル名).png', 'content': 'こんにちは！私は猫です', 'like': 0, 'is_liked': True}, {'id': 2, 'user_id': 'takumi', 'user_image':'/media/user_images/48944b4a-5f97-4d9e-910b-9139727e6d59.jpg', 'image': '/media/post_images/08_%E3%82%A8%E3%82%BF%E3%83%9E%E3%83%A1.png', 'content': 'hello, I am cat', 'like': 0, 'is_liked': False}]
     '''
     def get(self, request):
         try:
@@ -213,8 +193,8 @@ class GetAllPost(APIView):
             current_user_id = request.user.id # トークンからユーザー情報を取得
             post_resp = []
             for i in post:
-                is_liked = False
-                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0: # current_userがその投稿をいいねしてるか
+                is_liked = False # current_userがその投稿をいいねしてるか
+                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0:
                     is_liked = True
                 else:
                     is_liked = False
@@ -247,7 +227,7 @@ class GetFilteredPost(APIView):
         data = {'name': '猫'}
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-Typeがあると通らない
         r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
-        r.json() # [{'id': 2, 'user_id': 'takumi', 'user_image': '/media/user_images/SATO_IMAGE%E3%81%AE%E3%82%B3%E3%83%92%E3%83%BC.jpg', 'image': '/media/post_images/sato_image.jpg', 'content': 'me', 'like': 0}]
+        r.json() # [{'id': 2, 'user_id': 'takumi', 'user_image': '/media/user_images/SATO_IMAGE%E3%81%AE%E3%82%B3%E3%83%92%E3%83%BC.jpg', 'image': '/media/post_images/sato_image.jpg', 'content': 'me', 'like': 0, 'is_liked': False}]
     '''
     def get(self, request):
         try:
@@ -256,8 +236,8 @@ class GetFilteredPost(APIView):
             current_user_id = request.user.id
             post_resp = []
             for i in post:
-                is_liked = False
-                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0: # current_userがその投稿をいいねしてるか
+                is_liked = False # current_userがその投稿をいいねしてるか
+                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0:
                     is_liked = True
                 else:
                     is_liked = False
