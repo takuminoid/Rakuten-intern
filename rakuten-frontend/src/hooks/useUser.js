@@ -7,7 +7,7 @@ const initialState = {
 }
 const HumanState = {
     //TODO make user_id box
-    user_id: 'test_user',
+    user_id: null,
     mail: null,
     password: null,
 }
