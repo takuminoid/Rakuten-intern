@@ -31,6 +31,8 @@ const Qestion= ({signup_style,QestionSubmit}) =>  {
       });
 
     const handleToFeed = () => {
+        postHuman(JSON.parse(localStorage.getItem('userinfo')))
+        localStorage.removeItem('userinfo')
         history.push('/main')
       }
 

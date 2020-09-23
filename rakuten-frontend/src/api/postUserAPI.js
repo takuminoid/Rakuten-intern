@@ -6,9 +6,9 @@ const toJson = async (res) => {
         throw new Error(js.message)
     }
 }
-// TODO 404帰ってくる，リクエストは遅れてるからよし！
+// TODO typeとimgの送り方を考える
 const postHuman = async (body) => { 
-    const resp = await fetch(`http://localhost:8000/register/human`, {
+    const resp = await fetch(`http://localhost:8000/api/register/human`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ const postHuman = async (body) => {
     return toJson(resp)
 }
 const postAnimal = async (body) => { 
-    const resp = await fetch(`http://localhost:8000/register/animal`, {
+    const resp = await fetch(`http://localhost:8000/api/register/animal`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
