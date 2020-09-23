@@ -82,7 +82,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
     Author: Takumi Sato
     About: Create User. You can register the animal information.
     Use Example:
-        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': (base64文字列), 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
+        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': '(base64文字列)', 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
         r = requests.post('http://localhost:8000/api/register/animal/', data=data)
         r.json() # {'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'name': 'osushi', 'image': None, 'sex': 0, 'type': 4, 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test'}
         r2 = requests.get('http://localhost:8000/api/user/get/', data={'user_id': 'kanemura'})
@@ -103,7 +103,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
                 typeob.save()
                 data['type'] = typeob.id
 
-        if data['image'] is not None:
+        if ";base64," in data['image']:
             format, imgstr = data['image'].split(";base64,")
             data['image'] = imgstr
 
