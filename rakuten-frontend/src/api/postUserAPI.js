@@ -16,7 +16,6 @@ const postHuman = async (body) => {
         credentials: "same-origin",
         body: JSON.stringify(body), 
     })
-    
     return toJson(resp)
 }
 const postAnimal = async (body) => { 
