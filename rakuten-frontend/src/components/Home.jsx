@@ -181,8 +181,14 @@ const Home = () => {
 
     const _renderItems = () => {
         const domain = 'http://localhost:8000'
-        const incrementGood = (id) => Posts[id-1].like += 1
-        const decrementGood = (id) => Posts[id-1].like -= 1
+        const incrementGood = (id) => { 
+            Posts[id-1].like += 1
+            Posts[id-1].user_id = 'takurinton'
+        }
+        const decrementGood = (id) => { 
+            Posts[id-1].like -= 1
+            Posts[id-1].user_id = 'hoge'
+        }
         const handleGood = async (id, good) => {
             const uid = user.user_id
             const goodRequest = good 
@@ -207,6 +213,7 @@ const Home = () => {
                 throw new Error(e)
             })
         }
+        console.log(Posts)
 
         useEffect(() => {
             setPosts(Posts)
