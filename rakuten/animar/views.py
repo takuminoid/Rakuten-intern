@@ -296,10 +296,9 @@ class PostLike(generics.CreateAPIView):
 
     def delete(self, request):
         try:
-            like = objects.filter(post_id=Post.objects.get(id=post_id), user_id=User.objects.get(id=user_id))
-            return Response(like.count())
-            # like.delete()
-            # return Response(status=status.HTTP_200_OK)
+            like = Like.objects.get(post_id=Post.objects.get(id=request.data['post_id']), user_id=User.objects.get(id=request.data['user_id']))
+            like.delete()
+            return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
