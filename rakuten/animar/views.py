@@ -17,8 +17,7 @@ from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer
 from .models import User, UserManager, Post, Type, Like
-# from image_processing.human_detection import detect_human
-
+from .image_processing.human_detection import detect_human
 
 
 class MainAPI(APIView):
