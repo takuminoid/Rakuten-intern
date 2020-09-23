@@ -134,7 +134,9 @@ const signup_style = makeStyles((theme) => ({
     avatar: {
       margin: theme.spacing(1),
       backgroundColor: '#FFF'
-    },
+    },    input: {
+      display: 'none'
+  },
     animar: {
     marginBottom: theme.spacing(5),
     },
