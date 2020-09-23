@@ -17,31 +17,7 @@ from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer
 from .models import User, UserManager, Post, Type, Like
-from .image_processing.human_detection import detect_human
-
-
-class MainAPI(APIView):
-    def get(self, request):
-        try:
-            user = User.objects.all()
-            user_resp = [
-                {'name': i.name,
-                 'age': i.age
-                 }
-                for i in user
-            ]
-            return Response(user_resp)
-        except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def post(self, request):
-        try:
-            user = User(name=request.data['name'], age=request.data['age'])
-            user.save()
-            return Response([request.data])
-
-        except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+from .image_processing.human_detection import detect_human, toNdarray
 
 
 class PostAPI(APIView):
@@ -60,20 +36,25 @@ class PostAPI(APIView):
         STEP2 : if human is in image, reject this post request and return error response.
         STEP3 : otherwise, add data to Post Database and return success response.
         """
-        id = request.data['id']
-        user_id = request.data['user_id']
-        image = request.data['image']
-        content = request.data['content']
 
-        isinHuman = detect_human(image)
+        try:
+            id = request.data['id']
+            user_id = request.data['user_id']
+            image = request.data['image']
+            content = request.data['content']
 
-        if isinHuman:
-            # TODO: レスポンスがこんな感じでいいのかを確認する
+            image = toNdarray(image)
+            isinHuman = detect_human(image)
+
+            if isinHuman:
+                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                user = User.objects.get(user_id=user_id)
+                post_db = Post(id=id, user_id=user, image=image, content=content)
+                post_db.save()
+                return Response([request.data])
+        except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            post_db = Post(id=id, user_id=user_id, image=image, content=content)
-            post_db.save()
-            return Response([request.data])
 
 
 # ユーザ作成のView(POST)
