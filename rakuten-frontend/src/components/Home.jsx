@@ -15,11 +15,12 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-// import GetPosts from '../api/getPostAPI'
+// import GetPosts from '../api/getPostAPI'           
 import AllPost from '../api/getPostAPI'
 import { CreateLike, DeleteLike } from '../api/postLike'
 
 import useGetUser from '../hooks/useGetUser'
+import getAnimal from '../api/getAnimal'
 
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
@@ -107,8 +108,6 @@ const Home = () => {
     const [Posts, setPosts] = useState([])
     const [hasMore, setHasMore] = useState(false)
     const [page, setpage] = useState(1)
-    const dom = Posts
-
     const user = useGetUser()
 
     // const onChange =  async() => {
@@ -127,7 +126,8 @@ const Home = () => {
     //         throw new Error(e)
     //     })
     // }
-    
+
+
     useEffect(() => {
         const p = async () => {
             setLoading(true)
@@ -144,31 +144,34 @@ const Home = () => {
         p()
     }, [])
 
+    const incrementGood = (id) => Posts[id-1].like += 1
+    const decrementGood = (id) => Posts[id-1].like -= 1
 
     // ステートの更新まで実装
+    
     const handleGood = async (id, good) => {
         const uid = user.user_id
         const goodRequest = good 
         ? DeleteLike(id, uid) 
         : CreateLike(id, uid)
-
         goodRequest
         .then(() => {
             good ? (
-                Posts[id-1].like -= 1
+                decrementGood(id)
             ) : (
-                Posts[id-1].like += 1
+                incrementGood(id)
             )
-            setPosts(Posts)
         })
         .catch((e) => {
             throw new Error(e)
         })
     }
+
     useEffect(() => {
+        setPosts(Posts)
     }, [Posts])
 
-    const _renderItems= function() {
+    const _renderItems = () => {
         const domain = 'http://localhost:8000'
         return Posts.map(function(p) {
             const goodYet = p.user_id === 'takurinton' ? true : false // ここをfavoriteに変更
@@ -221,10 +224,12 @@ const Home = () => {
                     {goodYet ? (
                         <IconButton aria-label="add to favorites" color="secondary" onClick={() => handleGood(p.id, goodYet)}>
                             <FavoriteIcon />
+                            {p.like}
                         </IconButton>
                     ) : (
                         <IconButton aria-label="delete to favorites" onClick={() => handleGood(p.id, goodYet)}>
                             <FavoriteIcon />
+                            {p.like}
                         </IconButton>
                     )}
                     
