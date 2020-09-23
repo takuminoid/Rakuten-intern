@@ -25,19 +25,12 @@ import LoginUI from './LoginUI'
 import { MuiThemeProvider } from '@material-ui/core/styles';
 
 const Login = () => {
-    const classes = signup_style();
     const {
         handleChange, 
         handleSubmit, 
     } = useLogin()
 
-    const onChange = e => {
-        handleChange(e)
-    }
-    const onSubmit = e => {
-        e.preventDefault()
-        handleSubmit(state)
-    } 
+
     
     return (
         <Container component="main" maxWidth="false"> 

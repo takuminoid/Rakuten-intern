@@ -60,6 +60,9 @@ const useStyles = makeStyles((theme) => ({
     marginRight: "10%",
       maxWidth: "80%",
     },
+    input: {
+        display: 'none'
+    },
     paper: {
         paddingBottom: 50,
       },
@@ -300,7 +303,7 @@ const Home = () => {
                     type="file"
                 />
                 <label htmlFor="icon-button-photo">
-                    <IconButton color="primary" component="span">
+                    <IconButton color="secondary" component="span">
                         <PhotoCamera />
                     </IconButton>
                 </label>

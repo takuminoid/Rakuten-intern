@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, {useEffect, Fragment,useState } from 'react';
 import postUser from '../api/postUserAPI';
 import HumanForm, {AnimalForm} from '../hooks/useUser';
 import Avatar from '@material-ui/core/Avatar';
@@ -18,8 +18,9 @@ import { useHistory } from "react-router-dom";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import RedditTextField from './RedditTextField'
-import { DropzoneDialog } from 'material-ui-dropzone';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import {
+
     fade,
     MuiThemeProvider,
     ThemeProvider,
@@ -59,17 +60,34 @@ const AnimalFormUI= ({signup_style}) =>  {
     // アバター画像にプレビューを表示するために　filesにURLを取り込むためのもの
     const [files, setFiles] = useState([]);
     const [open, setOpen] = useState(false);
-    const handleSave = (acceptedFiles) => {
-        console.log('handleSave');
-        // previewの追加
-        setFiles(acceptedFiles.map(
-        file => Object.assign(file, {
-        preview: URL.createObjectURL(file)
-        })));
-        console.log('files', files.map((file, index) => (file.preview)));
+    // const handleSave = (acceptedFiles) => {
+    //     console.log('handleSave');
+    //     // previewの追加
+    //     setFiles(acceptedFiles.map(
+    //     file => Object.assign(file, {
+    //     preview: URL.createObjectURL(file)
+    //     })));
+    //     console.log('files', files.map((file, index) => (file.preview)));
 
-    }
+    // }
+    // 画像アップロード
+    const handleCapture = ({ target }) => {
+        const fileReader = new FileReader();
+        console.log();
+        const name = target.accept.includes('image') ? 'images' : 'videos';
+        setFiles(URL.createObjectURL(target.files[0]))
+        fileReader.readAsDataURL(target.files[0]);
 
+        fileReader.onload = (e) => {
+            handleImgChange(e.target.result);
+
+            // setimage(e.target.result);
+            // Post_data.images=e.target.result
+
+        }
+
+
+    };
 
 
 
@@ -87,17 +105,30 @@ const AnimalFormUI= ({signup_style}) =>  {
         </Typography>
 
         {/* Avatar is usr profile image */}
-        <Avatar src={files.map((file, index) => (file.preview))} className={classes.avatar}>
+        <Avatar src={files} className={classes.avatar}>
         </Avatar>
 
 
         <form  onSubmit={onSubmit} className={classes.form,classes.sign_in_card} >
-            <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
+            {/* <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
                 Add Image
-            </Button>
+            </Button> */}
             {/* DropzoneDialog is avatar image uploder */}
-
-            <DropzoneDialog
+            <Fragment>
+                <input
+                    accept="image/*"
+                    className={classes.input}
+                    id="icon-button-photo"
+                    onChange={handleCapture}
+                    type="file"
+                />
+                <label htmlFor="icon-button-photo">
+                    <IconButton color="primary" component="span">
+                        <PhotoCamera />
+                    </IconButton>
+                </label>
+            </Fragment>
+            {/* <DropzoneDialog
                 acceptedFiles={['image/*']}
                 cancelButtonText={"cancel"}
                 submitButtonText={"submit"}
@@ -119,10 +150,10 @@ const AnimalFormUI= ({signup_style}) =>  {
                     setOpen(false)
                     handleImgChange(files.map((file, index) => (file.preview)))
 
-                    }}
+                    }} 
                 showPreviews={true}
                 showFileNamesInPreview={true}
-            />
+            />*/}
 
 
             <Grid container spacing={2}>
