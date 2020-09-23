@@ -197,7 +197,7 @@ class GetUserInfo(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetAllPost(APIView):
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
     '''
     Author: Takumi Sato
     Date: 2020/09/18
@@ -210,19 +210,28 @@ class GetAllPost(APIView):
     def get(self, request):
         try:
             post = Post.objects.all()
+            current_user_id = request.user.id # トークンからユーザー情報を取得
             post_resp = []
             for i in post:
-                try:
+                is_liked = False
+                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0: # current_userがその投稿をいいねしてるか
+                    is_liked = True
+                else:
+                    is_liked = False
+
+                try: # user_imageのあるなし
                     image_url = i.user_id.image.url
                 except:
                     image_url = None
+
                 post_resp.append(
                     {'id': i.id,  # primary_key
                     'user_id': i.user_id.user_id,
                     'user_image': image_url,
                     'image': i.image.url, # パスを返す，例) "post_images/~~.png"
                     'content': i.content,
-                    'like': Like.objects.filter(post_id=i.id).count()
+                    'like': Like.objects.filter(post_id=i.id).count(),
+                    'is_liked': is_liked,
                     })
             return Response(post_resp)
         except:
@@ -244,8 +253,14 @@ class GetFilteredPost(APIView):
         try:
             req_type = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
             post = Post.objects.all()
+            current_user_id = request.user.id
             post_resp = []
             for i in post:
+                is_liked = False
+                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0: # current_userがその投稿をいいねしてるか
+                    is_liked = True
+                else:
+                    is_liked = False
                 user = User.objects.get(user_id=i.user_id.user_id)
                 if user.type is not None: # typeが入っていないユーザーの投稿があるとエラーが出るため
                     if user.type.name == req_type:
@@ -259,7 +274,8 @@ class GetFilteredPost(APIView):
                             'user_image': image_url,
                             'image': i.image.url, # パスを返す，例) "post_images/~~.png"
                             'content': i.content,
-                            'like': Like.objects.filter(post_id=i.id).count()
+                            'like': Like.objects.filter(post_id=i.id).count(),
+                            'is_liked': is_liked,
                             })
             return Response(post_resp)
         except:
