@@ -11,7 +11,6 @@ class CustomUserManager(UserManager):
     use_in_migrations = True
 
     def _create_user(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
-
         user = self.model(user_id=user_id, mail=mail, name=name, image=image, sex=sex, type=type, birthday=birthday, residence=residence, profile=profile, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -20,7 +19,6 @@ class CustomUserManager(UserManager):
     def create_user(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
         if not user_id: # user_idが無い場合エラーを返す
             raise ValueError('mast.')
-
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(user_id, mail, password, name, image, sex, type, birthday, residence, profile, **extra_fields)
@@ -32,14 +30,10 @@ class CustomUserManager(UserManager):
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
-        # user.save(using=self._db)
-        # return user
         return self._create_user(user_id, mail, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    # https://qiita.com/xKxAxKx/items/60e8fb93d6bbeebcf065
-
     id = models.AutoField(primary_key=True, unique=True)
     mail = models.EmailField(max_length=70)
     user_id = models.CharField(max_length=255, unique=True)  # 主キーは1つまでらしいからIDでやる、uniqueで制限をかける
@@ -77,19 +71,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def has_perm(self, perm, obj=None):
         return _user_has_perm(self, perm, obj=obj)
 
-    # def has_module_perms(self, app_label):
-    #     return self.is_admin
-
-    # @property
-    # def is_superuser(self):
-    #     return self.is_admin
-
-    # 何これ
-    # class Meta:
-    #     db_table = 'animar_user'
-    #     swappable = 'AUTH_USER_MODEL'
-
-
 class Type(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
     name = models.CharField(max_length=255)
@@ -106,10 +87,8 @@ class Like(models.Model):
         like.save()
         return post_id
 
-
 class Post(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images/')
     content = models.TextField()
-

@@ -62,6 +62,9 @@ class PostAPI(APIView):
 
 # ユーザ作成のView(POST)
 class AuthRegisterHuman(generics.CreateAPIView):
+    '''
+    Author: Takumi Katayama
+    '''
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = HumanSerializer
@@ -75,24 +78,24 @@ class AuthRegisterHuman(generics.CreateAPIView):
 
 class AuthRegisterAnimal(generics.CreateAPIView):
     '''
+    Author: Takumi Sato
     Use Example:
         data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': (base64文字列), 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
         r = requests.post('http://localhost:8000/api/register/animal/', data=data)
         r.json() # {'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'name': 'osushi', 'image': None, 'sex': 0, 'type': 4, 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test'}
         r2 = requests.get('http://localhost:8000/api/user/get/', data={'user_id': 'kanemura'})
-        r2.json() # {'id': 5, 'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'password': '(暗号化されたパスワード)', 'name': 'osushi', 'image': '/media/user_images/48944b4a-5f97-4d9e-910b-9139727e6d59.jpg', 'sex': 0, 'type': 'cat', 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test', 'created_at': '2020-09-23T03:50:31.981850Z'} # ユーザーテーブルに登録されている
+        r2.json() # {'id': 5, 'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'password': '(暗号化されたパスワード)', 'name': 'osushi', 'image': '/media/user_images/48944b4a-5f97-4d9e-910b-9139727e6d59.jpg', 'sex': 0, 'type': 'cat', 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test', 'created_at': '2020-09-23T03:50:31.981850Z'} # ユーザーテーブルに登録されていることが確認できる
     '''
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = AnimalSerializer
-
     def post(self, request, format=None):
         data = request.data.copy()
-        if data['type'] is not None: # typeは外部キーなので，Primary Keyを渡す必要がある
+        if data['type'] is not None:
             type_name = data['type']
             type = Type.objects.filter(name=type_name)
             if type.count() > 0 :
-                data['type'] = type.first().id
+                data['type'] = type.first().id # typeは外部キーなので，Primary Keyを渡す必要がある
             else: # typeが登録されていなかった場合は登録
                 typeob = Type(name=type_name)
                 typeob.save()
@@ -101,6 +104,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
         if data['image'] is not None:
             format, imgstr = data['image'].split(";base64,")
             data['image'] = imgstr
+
         serializer = AnimalSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -110,11 +114,12 @@ class AuthRegisterAnimal(generics.CreateAPIView):
 # ユーザ情報取得のView(GET)
 class GetAuthInfo(generics.RetrieveAPIView):
     '''
+    Author: Takumi Katayama
     About: 送られたきたトークンを見てそのユーザーの情報を返す
     Use example:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
         r = requests.get('http://localhost:8000/api/user/', headers=headers)
-        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '(暗号化されたパスワード)', 'name': None, 'image': 'media/user_images/(暗号化?されたファイル名).png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
+        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '(暗号化されたパスワード)', 'name': None, 'image': '/media/user_images/(暗号化?されたファイル名).png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
     '''
     queryset = User.objects.all()
     serializer_class = AnimalSerializer
@@ -139,12 +144,13 @@ class GetAuthInfo(generics.RetrieveAPIView):
 class GetUserInfo(APIView):
     permission_classes = (permissions.AllowAny,)
     '''
+    Author: Takumi Sato
     About: user_idを指定してユーザー情報を取得する
     Use Example:
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}} # 'Content-Type'を持たせると通らない？
         data = {'user_id': 'takumi'}
         r = requests.get('http://localhost:8000/api/user/get/', data=data, headers=headers)
-        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '[暗号化されたパスワード]', 'name': None, 'image': 'media/user_images/(暗号化?されたファイル名).png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
+        r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '[暗号化されたパスワード]', 'name': None, 'image': '/media/user_images/(暗号化?されたファイル名).png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
     '''
     def get(self, request):
         try:
@@ -154,7 +160,6 @@ class GetUserInfo(APIView):
                 type_name = user.type.name
             except:
                 type_name = None
-
             try:
                 image_url = user.image.url
             except:
@@ -180,7 +185,6 @@ class GetUserInfo(APIView):
 class GetAllPost(APIView):
     '''
     Author: Takumi Sato
-    Date: 2020/09/18
     About: You can get all post which users posted in animar. This is made for feed screen.
     Use Exmple:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-TYpeがなくても通る
@@ -221,7 +225,6 @@ class GetFilteredPost(APIView):
     permission_classes = (permissions.AllowAny,)
     '''
     Author: Takumi Sato
-    Data: 2020/09/18
     About: You can get filtered posts. "Filtered" means that you can select type of animal on posts.
     Use Example:
         data = {'name': '猫'}
