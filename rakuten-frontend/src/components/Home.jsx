@@ -19,6 +19,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AllPost from '../api/getPostAPI'
 import { CreateLike, DeleteLike } from '../api/postLike'
 
+import useGetUser from '../hooks/useGetUser'
+
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Fab from '@material-ui/core/Fab';
@@ -107,6 +109,8 @@ const Home = () => {
     const [page, setpage] = useState(1)
     const dom = Posts
 
+    const user = useGetUser()
+
     // const onChange =  async() => {
     //     setLoading(true)
     //     console.log("onChange");
@@ -143,10 +147,10 @@ const Home = () => {
 
     // ステートの更新まで実装
     const handleGood = async (id, good) => {
-        var userToken = localStorage.getItem('token')
+        const uid = user.user_id
         const goodRequest = good 
-        ? DeleteLike(id, userToken) 
-        : CreateLike(id, userToken)
+        ? DeleteLike(id, uid) 
+        : CreateLike(id, uid)
 
         goodRequest
         .then(() => {
@@ -161,6 +165,8 @@ const Home = () => {
             throw new Error(e)
         })
     }
+    useEffect(() => {
+    }, [Posts])
 
     const _renderItems= function() {
         const domain = 'http://localhost:8000'
