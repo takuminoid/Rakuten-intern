@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import toJson from '../toJson/toJson'
 
+var token = localStorage.getItem("token");
+
 const GetPosts = async ({page}) => {
     const params  = {
       searchText: '',
@@ -21,10 +23,9 @@ const AllPost = async () => {
         method: "GET",
         credentials: "same-origin",
         headers: {
-          'Authorization': `JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoidGFrdXJpbnRvbiIsInVzZXJuYW1lIjoidGFrdXJpbnRvbiIsImV4cCI6MTYwMDgyODk2OX0.keS-wiIiV2u9M1CEI6jMNAVU-ngReDMvGbno8ywndJA`
+          'Authorization': `JWT ${token}`
         }
     })
-    console.log(resp)
     return await toJson(resp)
 }
 // export default GetPosts

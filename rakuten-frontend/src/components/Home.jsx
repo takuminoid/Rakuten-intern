@@ -17,6 +17,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 // import GetPosts from '../api/getPostAPI'
 import AllPost from '../api/getPostAPI'
+import { CreateLike, DeleteLike } from '../api/postLike'
 
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
@@ -41,6 +42,7 @@ import {
 const useStyles = makeStyles((theme) => ({
     root: {
     marginTop: "20%",
+    marginBottom: "20%",
     marginLeft: "10%",
     marginRight: "10%",
       maxWidth: "80%",
@@ -122,22 +124,48 @@ const Home = () => {
     //     })
     // }
     
-    useEffect( async() => {
-        setLoading(true)
-        // GetPosts({page})
-        AllPost()
-        .then((p) => {
-            setPosts(p)
-            setLoading(false)
+    useEffect(() => {
+        const p = async () => {
+            setLoading(true)
+            // GetPosts({page})
+            AllPost()
+            .then((p) => {
+                setPosts(p)
+                setLoading(false)
+            })
+            .catch((e) => {
+                throw new Error(e)
+            })
+        }
+        p()
+    }, [])
+
+
+    // ステートの更新まで実装
+    const handleGood = async (id, good) => {
+        var userToken = localStorage.getItem('token')
+        const goodRequest = good 
+        ? DeleteLike(id, userToken) 
+        : CreateLike(id, userToken)
+
+        goodRequest
+        .then(() => {
+            good ? (
+                Posts[id-1].like -= 1
+            ) : (
+                Posts[id-1].like += 1
+            )
+            setPosts(Posts)
         })
         .catch((e) => {
             throw new Error(e)
         })
-    }, [])
+    }
 
     const _renderItems= function() {
         const domain = 'http://localhost:8000'
         return Posts.map(function(p) {
+            const goodYet = p.user_id === 'takurinton' ? true : false // ここをfavoriteに変更
           return (
               <div >
             {/* <img
@@ -175,7 +203,6 @@ const Home = () => {
                         {p.user_id.slice(0,1)}
                     </Avatar></Grid>
                 <Grid item xs={9}>
-
                     <Typography variant="body2" color="textSecondary" component="p">
                     {p.content}
                     </Typography></Grid>
@@ -185,9 +212,16 @@ const Home = () => {
                 </CardContent>
                 <CardActions disableSpacing className={classes.icons}>
                 <Grid item xs/>
-                    <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
-                    </IconButton>
+                    {goodYet ? (
+                        <IconButton aria-label="add to favorites" color="secondary" onClick={() => handleGood(p.id, goodYet)}>
+                            <FavoriteIcon />
+                        </IconButton>
+                    ) : (
+                        <IconButton aria-label="delete to favorites" onClick={() => handleGood(p.id, goodYet)}>
+                            <FavoriteIcon />
+                        </IconButton>
+                    )}
+                    
                     <IconButton aria-label="share">
                     <ShareIcon />
                     </IconButton>
