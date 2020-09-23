@@ -38,7 +38,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import {Maintheme} from './theme';
 import {PostForm} from '../hooks/useUser';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import getAnimal from '../api/getAnimal' 
 
 import {
     fade,
