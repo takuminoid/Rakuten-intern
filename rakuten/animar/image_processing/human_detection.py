@@ -7,7 +7,25 @@ you should note that we detect human only by naive method.
 """
 import numpy as np
 import argparse
+import base64
 import cv2
+
+
+def toNdarray(data_bs64: bytes) -> np.ndarray:
+    """
+    convert base64 data to ndarray.
+
+    Parameter
+    -----------
+    data_bs64 : base64 data
+
+    Return
+    -----------
+    array : converted base64 data
+    """
+    decoded = base64.decodebytes(data_bs64)
+    array = np.frombuffer(decoded, dtype=np.uint8)
+    return array
 
 
 def output_formatter(detector):
