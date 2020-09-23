@@ -17,6 +17,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import RedditTextField from './RedditTextField'
+import { useHistory } from "react-router-dom";
+import postHuman,{postAnimal}  from '../api/postUserAPI'
+
 import {
     fade,
     MuiThemeProvider,
@@ -28,6 +31,7 @@ import {
 
 const HumanFormUI= ({signup_style,humanSubmit}) =>  {
     const classes = signup_style();
+    const history = useHistory();
     const {
         handleChange, 
         handleSubmit, 
@@ -46,7 +50,11 @@ const HumanFormUI= ({signup_style,humanSubmit}) =>  {
         handleSubmit(state)
         humanSubmit()
     } 
-    
+    const handleToLogin = () => {
+        postHuman(JSON.parse(localStorage.getItem('userinfo')))
+        localStorage.removeItem('userinfo')
+        history.push('/login')
+      }
     // const onSubmit = data => console.log(data);
     const [errorMessage, setErrorMessage] = useState()
     const [user, setUser] = useState([])
@@ -87,6 +95,23 @@ const HumanFormUI= ({signup_style,humanSubmit}) =>  {
                 onChange={onChange} 
                 placeholder="mail"
                 validators={['mail']}
+                // helperText="Incorrect entry."
+                            /> 
+            </Grid>
+            <Grid item xs={12}>
+            <RedditTextField
+                variant="outlined"
+                required={true}
+                fullWidth
+                name="username"
+                label="username"
+                type="name"
+                id="name"
+                autoComplete="username"
+                value={state.user_id} 
+                onChange={onChange} 
+                placeholder="username"
+                validators={['username']}
                 // helperText="Incorrect entry."
                             /> 
             </Grid>
@@ -142,7 +167,16 @@ const HumanFormUI= ({signup_style,humanSubmit}) =>  {
         >
             Next
         </Button></div>
-
+        <Typography color="inherit"component="h5" variant="h5">
+        You already have an account? 
+        <Link
+        href="#" onClick={handleToLogin}
+        
+        >
+        Login
+        </Link>
+        
+    </Typography>
     </form>
     </div>) }
 export default HumanFormUI;
