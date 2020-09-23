@@ -64,6 +64,7 @@ class PostAPI(APIView):
 class AuthRegisterHuman(generics.CreateAPIView):
     '''
     Author: Takumi Katayama
+    About: Create User. You can register the human information.
     '''
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
@@ -79,6 +80,7 @@ class AuthRegisterHuman(generics.CreateAPIView):
 class AuthRegisterAnimal(generics.CreateAPIView):
     '''
     Author: Takumi Sato
+    About: Create User. You can register the animal information.
     Use Example:
         data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': (base64文字列), 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
         r = requests.post('http://localhost:8000/api/register/animal/', data=data)
@@ -115,7 +117,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
 class GetAuthInfo(generics.RetrieveAPIView):
     '''
     Author: Takumi Katayama
-    About: 送られたきたトークンを見てそのユーザーの情報を返す
+    About: Return User infomation by using JWToken
     Use example:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
         r = requests.get('http://localhost:8000/api/user/', headers=headers)
