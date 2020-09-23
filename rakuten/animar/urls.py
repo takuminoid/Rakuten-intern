@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^register/human/$', AuthRegisterHuman.as_view()),
     url(r'^register/animal/$', AuthRegisterAnimal.as_view()),
     url(r'user/$', GetAuthInfo.as_view()),
-    url(r'user/get/$', GetUserInfo.as_view()),
+    path('user/get/<str:user_id>/', GetUserInfo.as_view()),
     url(r'getpost/$', GetAllPost.as_view()),
     url(r'like/$', PostLike.as_view()),
     url(r'getfilteredpost/$', GetFilteredPost.as_view()),

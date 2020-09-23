@@ -154,9 +154,8 @@ class GetUserInfo(APIView):
         r = requests.get('http://localhost:8000/api/user/get/', data=data, headers=headers)
         r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '[暗号化されたパスワード]', 'name': None, 'image': '/media/user_images/(暗号化?されたファイル名).png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
     '''
-    def get(self, request):
+    def get(self, request, user_id):
         try:
-            user_id = request.data['user_id']
             user = User.objects.get(user_id=user_id)
             try:
                 type_name = user.type.name
