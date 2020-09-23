@@ -91,6 +91,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Type(models.Model):
+    id = models.AutoField(primary_key=True, unique=True)
     name = models.CharField(max_length=255)
 
     def __str__(self):

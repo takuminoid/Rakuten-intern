@@ -89,13 +89,31 @@ class AuthRegisterHuman(generics.CreateAPIView):
         # return Response(data)
 
 
-class AuthRegisterAnimal(generics.CreateAPIView):
+class AuthRegisterAnimal(generics.CreateAPIView): # imageはもうすぐ追加
+    '''
+    Use Example:
+        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi', 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
+        r = requests.post('http://localhost:8000/api/register/animal/', data=data)
+        r.json() # {'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'name': 'osushi', 'image': None, 'sex': 0, 'type': 4, 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test'}
+        r2 = requests.get('http://localhost:8000/api/user/get/', data={'user_id': 'kanemura'})
+        r2.json() # {'id': 5, 'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'password': 'pbkdf2_sha256$216000$s7zFVvsVI48v$nSNPQbPA5gljV+/awts1RGnInZUDFukBbjyeKEVCzEQ=', 'name': 'osushi', 'image': None, 'sex': 0, 'type': 'cat', 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test', 'created_at': '2020-09-23T03:50:31.981850Z'} # ユーザーテーブルに登録されている
+    '''
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = AnimalSerializer
 
     def post(self, request, format=None):
-        serializer = AnimalSerializer(data=request.data)
+        data = request.data.copy()
+        if data['type'] is not None: # typeは外部キーなので，Primary Keyを渡す必要がある
+            type_name = data['type']
+            type = Type.objects.filter(name=type_name)
+            if type.count() > 0 :
+                data['type'] = type.first().id
+            else: # typeが登録されていなかった場合は登録
+                typeob = Type(name=type_name)
+                typeob.save()
+                data['type'] = typeob.id
+            serializer = AnimalSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -144,15 +162,24 @@ class GetUserInfo(APIView):
         try:
             user_id = request.data['user_id']
             user = User.objects.get(user_id=user_id)
+            try:
+                type_name = user.type.name
+            except:
+                type_name = None
+
+            try:
+                image_url = user.image.url
+            except:
+                image_url = None
             return Response(data={
                 'id': user.id,
                 'mail': user.mail,
                 'user_id': user.user_id,
                 'password': user.password,
                 'name': user.name,
-                'image': user.image.url, # パスを返す
+                'image': image_url, # パスを返す
                 'sex': user.sex,
-                'type': user.type.name, # nameを返す
+                'type': type_name, # nameを返す
                 'birthday': user.birthday,
                 'residence': user.residence,
                 'profile': user.profile,
