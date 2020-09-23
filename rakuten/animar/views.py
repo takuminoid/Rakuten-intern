@@ -263,12 +263,14 @@ class PostLike(generics.CreateAPIView):
     """
     author : Nakagaki Yuto
     date   : 2020/09/18
-    About: You can post like.
+    About: You can post like and delete like.
     Use Example:
         data = {'post_id': 1, 'user_id': 1}
         headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}
         r = requests.post('http://localhost:8000/api/like/', data=data, headers=headers)
+        r = requests.delete('http://localhost:8000/api/like/', data=data, headers=headers)
         r.json() # [{'post_id': 1, 'user_id': 1}]
+
     """
 
     permission_classes = (permissions.AllowAny,)
@@ -281,3 +283,13 @@ class PostLike(generics.CreateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request):
+        try:
+            like = objects.filter(post_id=Post.objects.get(id=post_id), user_id=User.objects.get(id=user_id))
+            return Response(like.count())
+            # like.delete()
+            # return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
