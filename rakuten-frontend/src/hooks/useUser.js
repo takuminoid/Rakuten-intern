@@ -6,7 +6,9 @@ const initialState = {
     age: null,
 }
 const HumanState = {
-    email: null,
+    //TODO make user_id box
+    user_id: 'test_user',
+    mail: null,
     password: null,
 }
 const AnimalState = {
@@ -28,7 +30,8 @@ const HumanForm = () => {
     }
 
     const handleSubmit = (body) => {
-        postHuman(body)
+        //postHuman(body)
+        localStorage.setItem('userinfo', JSON.stringify(body))
         setHumanState(HumanState)
     }
 
@@ -48,7 +51,8 @@ const AnimalForm = () => {
         setAnimalState({ ...state, ["image"]: img }) // TODO Base64？？　or そのまま？？
     }
     const handleSubmit = (body) => {
-        postAnimal(body)
+        const addData = Object.assign(JSON.parse(localStorage.getItem('userinfo')), body)
+        postAnimal(addData)
         setAnimalState(AnimalState)
     }
 

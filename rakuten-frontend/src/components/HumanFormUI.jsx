@@ -78,15 +78,15 @@ const HumanFormUI= ({signup_style,humanSubmit}) =>  {
                 variant="outlined"
                 required={true}
                 fullWidth
-                name="email"
+                name="mail"
                 label="email"
                 type="name"
                 id="name"
-                autoComplete="email"
+                autoComplete="mail"
                 value={state.email} 
                 onChange={onChange} 
-                placeholder="email"
-                validators={['email']}
+                placeholder="mail"
+                validators={['mail']}
                 // helperText="Incorrect entry."
                             /> 
             </Grid>
