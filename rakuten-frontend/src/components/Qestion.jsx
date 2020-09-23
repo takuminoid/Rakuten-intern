@@ -8,6 +8,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import RedditTextField from './RedditTextField'
 
+import loginForSignup from '../api/login'
 import postHuman,{postAnimal}  from '../api/postUserAPI'
 
 import {
@@ -35,7 +36,15 @@ const Qestion= ({signup_style,QestionSubmit}) =>  {
 
     const handleToFeed = () => {
         postHuman(JSON.parse(localStorage.getItem('userinfo')))
-        localStorage.removeItem('userinfo')
+        .then((u) => {
+            localStorage.removeItem('userinfo')
+            loginForSignup(JSON.parse(localStorage.getItem('loginfo')))
+            localStorage.removeItem('loginfo')
+            setLoading(false)
+        })
+        .catch((e) => {
+            throw new Error(e)
+        })
         history.push('/main')
       }
 

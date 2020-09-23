@@ -1,6 +1,9 @@
 import React, {useEffect, useState } from 'react'
+
+import loginForSignup from '../api/login'
 import getAnimal from '../api/getAnimal' 
 import postHuman,{postAnimal,postPost}  from '../api/postUserAPI'
+
 const initialState = {
     name: null, 
     age: null,
@@ -23,11 +26,13 @@ const AnimalState = {
     profile:null,
 }
 
+
 const PostState = {
     user_id: null,
     image:null,
     content:null,
 }
+
 const HumanForm = () => {
     const [state, setHumanState] = useState(HumanState)
 
@@ -38,6 +43,11 @@ const HumanForm = () => {
     const handleSubmit = (body) => {
         //postHuman(body)
         localStorage.setItem('userinfo', JSON.stringify(body))
+        const loginfo = {
+            'user_id': body.user_id,
+            'password': body.password
+        }
+        localStorage.setItem('loginfo', JSON.stringify(loginfo))
         setHumanState(HumanState)
     }
 
@@ -49,6 +59,7 @@ const HumanForm = () => {
 }
 const AnimalForm = () => {
     const [state, setAnimalState] = useState(AnimalState)
+    const [loading, setLoading] = useState(true)
 
     const handleChange = e => {
         setAnimalState({...state, [e.target.name]: e.target.value })
@@ -59,7 +70,17 @@ const AnimalForm = () => {
     const handleSubmit = (body) => {
         const addData = Object.assign(JSON.parse(localStorage.getItem('userinfo')), body)
         postAnimal(addData)
-        setAnimalState(AnimalState)
+        .then((u) => {
+            localStorage.removeItem('userinfo')
+            loginForSignup(JSON.parse(localStorage.getItem('loginfo')))
+            localStorage.removeItem('loginfo')
+            setAnimalState(AnimalState)
+            setLoading(false)
+        })
+        .catch((e) => {
+            throw new Error(e)
+        })
+        
     }
 
     return {

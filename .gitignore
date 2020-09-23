@@ -106,3 +106,6 @@ venv.bak/
 # images
 rakuten/media/user_images/*
 rakuten/media/post_images/*
+
+# suzuki-test notebooks 
+rakuten/animar/notebooks/*
