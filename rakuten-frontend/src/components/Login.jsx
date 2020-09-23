@@ -2,8 +2,11 @@ import React, {useState, useEffect} from 'react'
 
 import useLogin from '../hooks/useLogin'
 
+import { useHistory } from 'react-router-dom'
+
 const Login = () => {
 
+    let history = useHistory()
 
     const [user, setUser] = useState(null)
     const {
@@ -19,6 +22,7 @@ const Login = () => {
     const onSubmit = e => {
         e.preventDefault()
         handleSubmit(state)
+        history.push('/main')
     } 
 
     return (
