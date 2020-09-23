@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import getAnimal from '../api/getAnimal'
+import getAnimal,{getOtherAnimal} from '../api/getAnimal'
 
 
 //TODO show image
