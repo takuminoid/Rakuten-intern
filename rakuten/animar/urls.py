@@ -6,7 +6,6 @@ from .views import AuthRegisterHuman, AuthRegisterAnimal, GetAuthInfo, GetUserIn
 from . import views
 
 urlpatterns = [
-    path('', views.MainAPI.as_view(), ),
     path('post/', views.PostAPI.as_view(), ),
     url(r'^register/human/$', AuthRegisterHuman.as_view()),
     url(r'^register/animal/$', AuthRegisterAnimal.as_view()),
