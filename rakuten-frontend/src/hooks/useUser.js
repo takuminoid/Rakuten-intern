@@ -1,22 +1,35 @@
 import React, {useEffect, useState } from 'react'
 
-import postUser from '../api/postUserAPI'
-
+import postHuman,{postAnimal}  from '../api/postUserAPI'
 const initialState = {
-    name: '', 
-    age: 0
+    name: null, 
+    age: null,
 }
-
-const UserForm = () => {
-    const [state, setState] = useState(initialState)
+const HumanState = {
+    email: null,
+    password: null,
+}
+const AnimalState = {
+    name: null, 
+    type: null,
+    barthday: null,
+    sex: null,
+    residence: null,
+    // email: null,
+    // password: null,
+    image:null,
+    profile:null,
+}
+const HumanForm = () => {
+    const [state, setHumanState] = useState(HumanState)
 
     const handleChange = e => {
-        setState({...state, [e.target.name]: e.target.value })
+        setHumanState({...state, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = (body) => {
-        postUser(body)
-        setState(initialState)
+        postHuman(body)
+        setHumanState(HumanState)
     }
 
     return {
@@ -25,5 +38,43 @@ const UserForm = () => {
         state, 
     }
 }
+const AnimalForm = () => {
+    const [state, setAnimalState] = useState(AnimalState)
 
-export default UserForm
+    const handleChange = e => {
+        setAnimalState({...state, [e.target.name]: e.target.value })
+    }
+    function handleImgChange(img) {
+        setAnimalState({ ...state, ["image"]: img }) // TODO Base64？？　or そのまま？？
+    }
+    const handleSubmit = (body) => {
+        postAnimal(body)
+        setAnimalState(AnimalState)
+    }
+
+    return {
+        handleChange, 
+        handleSubmit, 
+        state, handleImgChange
+    }
+}
+// const UserForm = () => {
+//     const [state, setState] = useState(initialState)
+
+//     const handleChange = e => {
+//         setState({...state, [e.target.name]: e.target.value })
+//     }
+
+//     const handleSubmit = (body) => {
+//         postUser(body)
+//         setState(initialState)
+//     }
+
+//     return {
+//         handleChange, 
+//         handleSubmit, 
+//         state, 
+//     }
+// }
+export default HumanForm;
+export  { AnimalForm};
