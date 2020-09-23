@@ -111,3 +111,4 @@ class Post(models.Model):
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images/')
     content = models.TextField()
+
