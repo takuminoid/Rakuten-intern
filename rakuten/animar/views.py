@@ -130,6 +130,7 @@ class GetAuthInfo(generics.RetrieveAPIView):
             status=status.HTTP_200_OK)
 
 class GetUserInfo(APIView):
+    permission_classes = (permissions.AllowAny,)
     '''
     About: user_idを指定してユーザー情報を取得する
     Use Example:
@@ -161,6 +162,7 @@ class GetUserInfo(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetAllPost(APIView):
+    permission_classes = (permissions.AllowAny,)
     '''
     Author: Takumi Sato
     Date: 2020/09/18
@@ -187,6 +189,7 @@ class GetAllPost(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetFilteredPost(APIView):
+    permission_classes = (permissions.AllowAny,)
     '''
     Author: Takumi Sato
     Data: 2020/09/18
@@ -228,6 +231,7 @@ class GetFilteredPost(APIView):
 
 
 class PostLike(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
     """
     author : Nakagaki Yuto
     date   : 2020/09/18
