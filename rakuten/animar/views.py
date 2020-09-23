@@ -18,6 +18,9 @@ from rest_framework.views import APIView
 from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer
 from .models import User, UserManager, Post, Type, Like
 from .image_processing.human_detection import detect_human, toNdarray
+import base64
+import numpy as np
+from django.core.files.base import ContentFile
 
 
 class PostAPI(APIView):
@@ -112,7 +115,14 @@ class AuthRegisterAnimal(generics.CreateAPIView): # imageはもうすぐ追加
                 typeob = Type(name=type_name)
                 typeob.save()
                 data['type'] = typeob.id
-            serializer = AnimalSerializer(data=data)
+
+        if data['image'] is not None:
+            format, imgstr = data['image'].split(";base64,")
+            data['image'] = imgstr
+        #     ext = format.split("/")[-1]
+        #     data['image'] = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
+        # return Response(data['image'])
+        serializer = AnimalSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
