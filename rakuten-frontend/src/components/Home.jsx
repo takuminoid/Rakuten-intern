@@ -15,7 +15,9 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import GetPosts from '../api/getPostAPI'
+// import GetPosts from '../api/getPostAPI'
+import AllPost from '../api/getPostAPI'
+
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Fab from '@material-ui/core/Fab';
@@ -38,7 +40,7 @@ import {
 
 const useStyles = makeStyles((theme) => ({
     root: {
-    marginTop: "10%",
+    marginTop: "20%",
     marginLeft: "10%",
     marginRight: "10%",
       maxWidth: "80%",
@@ -103,37 +105,39 @@ const Home = () => {
     const [page, setpage] = useState(1)
     const dom = Posts
 
-    const onChange =  async() => {
-        setLoading(true)
-        console.log("onChange");
-        setpage(page+1)
-        console.log(page);
-        GetPosts({page})
-        .then((u) => {
-        setPosts(Posts.concat(u.hits))
-        console.log(Posts);
-        // setPosts()
-            setLoading(false)
-        })
-        .catch((e) => {
-            throw new Error(e)
-        })
-    }
+    // const onChange =  async() => {
+    //     setLoading(true)
+    //     console.log("onChange");
+    //     setpage(page+1)
+    //     console.log(page);
+    //     // GetPosts({page})
+    //     AllPost()
+    //     .then((u) => {
+    //     setPosts(Posts.concat(u.hits))
+    //     // setPosts()
+    //         setLoading(false)
+    //     })
+    //     .catch((e) => {
+    //         throw new Error(e)
+    //     })
+    // }
     
     useEffect( async() => {
         setLoading(true)
-        GetPosts({page})
-        .then((u) => {
-            setPosts(u.hits)
+        // GetPosts({page})
+        AllPost()
+        .then((p) => {
+            setPosts(p)
             setLoading(false)
         })
         .catch((e) => {
             throw new Error(e)
         })
     }, [])
-    
+
     const _renderItems= function() {
-        return Posts.map(function(imageUrl, index) {
+        const domain = 'http://localhost:8000'
+        return Posts.map(function(p) {
           return (
               <div >
             {/* <img
@@ -158,7 +162,7 @@ const Home = () => {
                 /> */}
                 <CardMedia
                     className={classes.media}
-                    image={imageUrl.largeImageURL}
+                    image={domain+p.image}
                     // title="Paella dish"
                 />
                 <CardContent>
@@ -167,14 +171,13 @@ const Home = () => {
 
                 <Grid container spacing={2}>
                 <Grid item xs={3}>
-                <Avatar aria-label="recipe" src={imageUrl.userImageURL} className={classes.avatar}>
-                        R
+                <Avatar aria-label="recipe" src={p.user_id} className={classes.avatar}>
+                        {p.user_id.slice(0,1)}
                     </Avatar></Grid>
                 <Grid item xs={9}>
 
                     <Typography variant="body2" color="textSecondary" component="p">
-                    I am a cat. Cats are good pets, for they are clean and are not noisy.
-                    I would have gotten the promotion, but my attendance wasn’t good enough.
+                    {p.content}
                     </Typography></Grid>
 
                     </Grid>
@@ -210,7 +213,7 @@ const Home = () => {
                 </   AppBar>
                 <_renderItems />
             
-                <Waypoint onEnter={onChange} />
+                {/* <Waypoint onEnter={onChange} /> */}
 
                 {loading ? (<h1>Loading</h1>) : <div></div>}
 
