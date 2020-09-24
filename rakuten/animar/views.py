@@ -103,7 +103,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
                 typeob.save()
                 data['type'] = typeob.id
 
-        if ";base64," in data['image']:
+        if data['image'] is not None:
             format, imgstr = data['image'].split(";base64,")
             data['image'] = imgstr
 
@@ -222,7 +222,7 @@ class GetAllPost(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetFilteredPost(APIView):
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
     '''
     Author: Takumi Sato
     About: You can get filtered posts. "Filtered" means that you can select type of animal on posts.
