@@ -92,7 +92,7 @@ const AnimalForm = () => {
             setLoading(false)
         })
         .catch((e) => {
-            throw new Error(e)
+            history.push('/error')
         })
         
     }

@@ -1,4 +1,5 @@
-import React, {useState, useEffect ,useRef, useCallback} from 'react'
+import React, {useState, useEffect ,useRef, useCallback } from 'react'
+import {useHistory} from 'react-router-dom'
 import { Waypoint } from 'react-waypoint';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -112,6 +113,7 @@ const Home = () => {
     const [hasMore, setHasMore] = useState(false)
     const [page, setpage] = useState(1)
     const user = useGetUser()
+    let history = useHistory()
 
     // const onChange =  async() => {
     //     setLoading(true)
@@ -141,7 +143,7 @@ const Home = () => {
                 setLoading(false)
             })
             .catch((e) => {
-                throw new Error(e)
+                history.push('/error')
             })
         }
         p()
@@ -184,11 +186,11 @@ const Home = () => {
                     setPosts(g)
                 })
                 .catch(e => {
-                    throw new Error(e)
+                    history.push('/error')
                 })
             })
             .catch((e) => {
-                throw new Error(e)
+                history.push('/error')
             })
         }
 

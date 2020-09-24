@@ -48,7 +48,7 @@ const useLogin = () => {
             }
         })
         .catch((e) => {
-            return e
+            history.push('/forhidden')
         })
     }
 
