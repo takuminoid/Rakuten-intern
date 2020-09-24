@@ -64,6 +64,7 @@ class PostAPI(APIView):
 class AuthRegisterHuman(generics.CreateAPIView):
     '''
     Author: Takumi Katayama
+    About: Create User. You can register the human information.
     '''
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
@@ -79,8 +80,9 @@ class AuthRegisterHuman(generics.CreateAPIView):
 class AuthRegisterAnimal(generics.CreateAPIView):
     '''
     Author: Takumi Sato
+    About: Create User. You can register the animal information.
     Use Example:
-        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': (base64文字列), 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
+        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': '(base64文字列)', 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
         r = requests.post('http://localhost:8000/api/register/animal/', data=data)
         r.json() # {'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'name': 'osushi', 'image': None, 'sex': 0, 'type': 4, 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test'}
         r2 = requests.get('http://localhost:8000/api/user/get/', data={'user_id': 'kanemura'})
@@ -101,7 +103,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
                 typeob.save()
                 data['type'] = typeob.id
 
-        if data['image'] is not None:
+        if ";base64," in data['image']:
             format, imgstr = data['image'].split(";base64,")
             data['image'] = imgstr
 
@@ -115,7 +117,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
 class GetAuthInfo(generics.RetrieveAPIView):
     '''
     Author: Takumi Katayama
-    About: 送られたきたトークンを見てそのユーザーの情報を返す
+    About: Return User infomation by using JWToken
     Use example:
         headers = {'Content-Type': 'application/json', 'Authorization': 'JWT [ログイン時に取得したトークン]'}
         r = requests.get('http://localhost:8000/api/user/', headers=headers)
@@ -147,14 +149,12 @@ class GetUserInfo(APIView):
     Author: Takumi Sato
     About: user_idを指定してユーザー情報を取得する
     Use Example:
-        headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'}} # 'Content-Type'を持たせると通らない？
         data = {'user_id': 'takumi'}
-        r = requests.get('http://localhost:8000/api/user/get/', data=data, headers=headers)
+        r = requests.get('http://localhost:8000/api/user/get/takumi/') # user_idを指定
         r.json() # {'id': 1, 'mail': 'hoge@gmail.com', 'user_id': 'takumi', 'password': '[暗号化されたパスワード]', 'name': None, 'image': '/media/user_images/(暗号化?されたファイル名).png', 'sex': None, 'type': 'わんこ', 'birthday': '2020-09-20', 'residence': None, 'profile': '', 'created_at': '2020-09-20T07:26:36Z'}
     '''
-    def get(self, request):
+    def get(self, request, user_id):
         try:
-            user_id = request.data['user_id']
             user = User.objects.get(user_id=user_id)
             try:
                 type_name = user.type.name
@@ -227,14 +227,11 @@ class GetFilteredPost(APIView):
     Author: Takumi Sato
     About: You can get filtered posts. "Filtered" means that you can select type of animal on posts.
     Use Example:
-        data = {'name': '猫'}
-        headers = {'Authorization': 'JWT [ログイン時に取得したトークン]'} # Content-Typeがあると通らない
-        r = requests.get('http://localhost:8000/api/getfilteredpost/', data=data, headers=headers)
+        r = requests.get('http://localhost:8000/api/getpost/filter/猫/') # type.nameを指定
         r.json() # [{'id': 2, 'user_id': 'takumi', 'user_image': '/media/user_images/SATO_IMAGE%E3%81%AE%E3%82%B3%E3%83%92%E3%83%BC.jpg', 'image': '/media/post_images/sato_image.jpg', 'content': 'me', 'like': 0, 'is_liked': False}]
     '''
-    def get(self, request):
+    def get(self, request, tname):
         try:
-            req_type = request.data['name'] # JSONに絞りたいタイプのnameを入れて送ってもらうのが良い？
             post = Post.objects.all()
             current_user_id = request.user.id
             post_resp = []
@@ -246,7 +243,7 @@ class GetFilteredPost(APIView):
                     is_liked = False
                 user = User.objects.get(user_id=i.user_id.user_id)
                 if user.type is not None: # typeが入っていないユーザーの投稿があるとエラーが出るため
-                    if user.type.name == req_type:
+                    if user.type.name == tname:
                         try:
                             image_url = i.user_id.image.url
                         except:

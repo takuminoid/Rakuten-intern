@@ -23,8 +23,10 @@ const ViewProfile = () => {
 
     const dom = [animal]
 
+    const user_id = 'hosomi_test'
+
     useEffect( async() => {
-        getAnimal()
+        getOtherAnimal(user_id)
         .then((u) => {
             setAnimal(u)
             setLoading(false)
