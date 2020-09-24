@@ -5,6 +5,8 @@ from django.contrib.auth.models import (
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.core.files import File
+from drf_extra_fields.fields import Base64ImageField
 
 
 class CustomUserManager(UserManager):
@@ -79,6 +81,10 @@ class Type(models.Model):
         return self.name
 
 class Like(models.Model):
+    """
+    author : Nakagaki Yuto
+    date   : 2020/09/18
+    """
     post_id = models.ForeignKey('Post', on_delete=models.CASCADE)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
 
@@ -87,8 +93,13 @@ class Like(models.Model):
         like.save()
         return post_id
 
+
 class Post(models.Model):
-    id = models.AutoField(primary_key=True, unique=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images/')
-    content = models.TextField()
+    content = models.CharField(max_length=255, blank=True, null=True)
+
+    def create_post(self, user_id, image, content):
+        post_db = Post(user_id=user_id, image=image, content=content)
+        post_db.save()
+        return user_id

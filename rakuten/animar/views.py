@@ -15,11 +15,10 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
-from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer
+from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer, PostSerializer
 from .models import User, UserManager, Post, Type, Like
-from .image_processing.human_detection import detect_human, toNdarray
+from .image_processing.human_detection import detect_human, toArrayImg
 import base64
-import numpy as np
 from django.core.files.base import ContentFile
 
 
@@ -31,7 +30,7 @@ class PostAPI(APIView):
     process HTTP POST request.
     """
     permission_classes = (permissions.AllowAny,)
-
+    serializer_class = PostSerializer
 
     def post(self, request):
         """
@@ -41,24 +40,18 @@ class PostAPI(APIView):
         STEP2 : if human is in image, reject this post request and return error response.
         STEP3 : otherwise, add data to Post Database and return success response.
         """
+        image = toArrayImg(request.data['image'].split("base64,")[-1])
+        isinHuman = detect_human(image)
 
-        try:
-            user_id = request.data['user_id']
-            image = request.data['image']
-            content = request.data['content']
+        if isinHuman:
+            return Response("We cannot accept your image because human is in it.", status=status.HTTP_412_PRECONDITION_FAILED)
+        else:
+            serializer = PostSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            image = toNdarray(image)
-            isinHuman = detect_human(image)
-
-            if isinHuman:
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                user = User.objects.get(user_id=user_id)
-                post_db = Post(user_id=user, image=image, content=content)
-                post_db.save()
-                return Response([request.data])
-        except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ユーザ作成のView(POST)
 class AuthRegisterHuman(generics.CreateAPIView):
@@ -271,7 +264,6 @@ class GetFilteredPost(APIView):
 
 
 class PostLike(generics.CreateAPIView):
-    permission_classes = (permissions.AllowAny,)
     """
     author : Nakagaki Yuto
     date   : 2020/09/18
