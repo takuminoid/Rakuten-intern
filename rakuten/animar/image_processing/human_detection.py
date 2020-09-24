@@ -30,7 +30,7 @@ def toArrayImg(data_bs64: bytes, save: bool = True) -> np.ndarray:
     decoded = base64.b64decode(data_bs64)
     array = np.frombuffer(decoded, dtype=np.uint8)
     img = cv2.imdecode(array, cv2.IMREAD_COLOR)
-    path = osp.join(CURRENT_DIR, "test", "test.jpg")
+    path = osp.join(CURRENT_DIR, "test", "test.png")
     cv2.imwrite(path, img)
     return img, path
 

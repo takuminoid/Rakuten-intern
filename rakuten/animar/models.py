@@ -106,13 +106,13 @@ class Post(models.Model):
     # id = models.AutoField(primary_key=True, unique=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     # image = models.ImageField(null=False)
-    image = Base64ImageField()
+    image = models.ImageField(upload_to='post_images/')
     content = models.CharField(max_length=255, blank=True, null=True)
 
-    def create_post(self, user_id, image_path, content):
-        raise Exception
-        user = User.objects.get(user_id=user_id)
-        image = File(open(image_path))
-        post_db = Post(user_id=user, image=image, content=content)
+    def create_post(self, user_id, image, content):
+        # raise Exception
+        # user = User.objects.get(user_id=user_id)
+        # image = File(open(image_path))
+        post_db = Post(user_id=user_id, image=image, content=content)
         post_db.save()
         return user_id
