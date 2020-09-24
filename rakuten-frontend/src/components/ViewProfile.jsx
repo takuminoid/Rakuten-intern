@@ -142,18 +142,18 @@ const ViewProfile = () => {
 
 
     const dom = [animal]
-    const DumyAnimalState = {
-        name: "Somo", 
-        type: "Cat",
-        barthday: "2000/10/20",
-        sex: 0,
-        residence: "Chiba",
-        // email: null,
-        // password: null,
-        image:null,
-        profile:"Open the door to let me in. You know I am cat, A new, scary specie. Open the door now.",
-    }
-    
+    // const DumyAnimalState = {
+    //     name: "Somo", 
+    //     type: "Cat",
+    //     birthday: "2000/10/20",
+    //     sex: 0,
+    //     residence: "Chiba",
+    //     // email: null,
+    //     // password: null,
+    //     image:null,
+    //     profile:"Open the door to let me in. You know I am cat, A new, scary specie. Open the door now.",
+    // }
+
     // useEffect( async() => {
     //     getAnimal()
     //     .then((u) => {
@@ -165,16 +165,18 @@ const ViewProfile = () => {
     //     })
     // }, [])
 
-    useEffect( async() => {
+    const [DumyAnimalState, setUser] = useState({})
+    useEffect(async() => {
         getAnimal()
         .then((u) => {
-            setAnimal(u)
+            setUser(u)
             setLoading(false)
         })
-        .catch((e) => {
+        .catch(() => {
             history.push('/error')
         })
     }, [])
+
     const calculate_age=(data)=> { 
         var birthday = new Date(data[0], data[1], data[2]);
 
@@ -189,7 +191,9 @@ const ViewProfile = () => {
       }
     return (
         <div>
-            
+            {loading ? 
+            (<div>loading</div>) : 
+            (
             <MuiThemeProvider theme={Maintheme}>
                 <Paper square className={classes.paper}>
 
@@ -226,7 +230,7 @@ const ViewProfile = () => {
                         </Grid>
                         <Grid item xs={3}>
                             <Typography className={classes.text} variant="h5"   >
-                            {calculate_age(DumyAnimalState.barthday.split('/'))}yo
+                            {calculate_age(DumyAnimalState.birthday.split('-'))}yo
                             </Typography>
                         </Grid>
                         <Grid item xs={3}>
@@ -265,6 +269,8 @@ const ViewProfile = () => {
                     </AppBar>
                 </Paper>
             </MuiThemeProvider>
+            )}
+            
         </div>
     )
 
