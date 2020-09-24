@@ -18,7 +18,7 @@ const AnimalState = {
     name: null, 
     type: null,
     birthday: null,
-    sex: null,
+    sex: 0,
     residence: null,
     // email: null,
     // password: null,
@@ -76,13 +76,17 @@ const AnimalForm = () => {
     const handleChange = e => {
         setAnimalState({...state, [e.target.name]: e.target.value })
     }
+    const handleChangeNum = e => {
+        var NumGender = parseInt(e.target.value,10)
+        setAnimalState({...state, [e.target.name]: NumGender })
+    }
     function handleImgChange(img) {
         setAnimalState({ ...state, ["image"]: img }) // TODO Base64？？　or そのまま？？
     }
     const handleSubmit = (body) => {
         const addData = Object.assign(JSON.parse(localStorage.getItem('userinfo')), body)
         console.log(addData)
-        //postAnimal(TestAnimal)
+        //        postAnimal(TestAnimal)
         postAnimal(addData)
         .then((u) => {
             localStorage.removeItem('userinfo')
@@ -100,7 +104,8 @@ const AnimalForm = () => {
     return {
         handleChange, 
         handleSubmit, 
-        state, handleImgChange
+        state, handleImgChange,
+        handleChangeNum,
     }
 }
 const PostForm = () => {

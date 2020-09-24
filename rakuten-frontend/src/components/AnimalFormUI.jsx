@@ -38,13 +38,18 @@ const AnimalFormUI= ({signup_style}) =>  {
     const {
         handleChange, 
         handleSubmit, 
-        state,handleImgChange
+        state,handleImgChange,
+        handleChangeNum,
     } = AnimalForm()
     
 
     const onChange = e => {
 
         handleChange(e)
+    }
+    const onChangeNum = e => {
+
+        handleChangeNum(e)
     }
     const onSubmit = e => {
         console.log("onSubmit");
@@ -192,11 +197,13 @@ const AnimalFormUI= ({signup_style}) =>  {
                 fullWidth
                 name="sex"
                 label="Gender"
-                type="name"
+                type="number"
+                min="0"
+                max="2"
                 id="Gender"
                 autoComplete="Gender"
                 value={state.sex} 
-                onChange={onChange} 
+                onChange={onChangeNum} 
                 placeholder="Todo select box " //TODO select box
                             /> 
             </Grid>
