@@ -4,6 +4,8 @@ import loginForSignup from '../api/login'
 import getAnimal from '../api/getAnimal' 
 import postHuman,{postAnimal,postPost}  from '../api/postUserAPI'
 
+import { useHistory } from 'react-router-dom'
+
 const initialState = {
     name: null, 
     age: null,
@@ -72,6 +74,7 @@ const HumanForm = () => {
 const AnimalForm = () => {
     const [state, setAnimalState] = useState(AnimalState)
     const [loading, setLoading] = useState(true)
+    let history = useHistory()
 
     const handleChange = e => {
         setAnimalState({...state, [e.target.name]: e.target.value })
@@ -92,7 +95,7 @@ const AnimalForm = () => {
             setLoading(false)
         })
         .catch((e) => {
-            throw new Error(e)
+            history.push('/error')
         })
         
     }
