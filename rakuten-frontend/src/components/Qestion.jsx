@@ -43,7 +43,7 @@ const Qestion= ({signup_style,QestionSubmit}) =>  {
             setLoading(false)
         })
         .catch((e) => {
-            throw new Error(e)
+            history.push('/error')
         })
         history.push('/main')
       }
