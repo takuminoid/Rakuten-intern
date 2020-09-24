@@ -19,7 +19,6 @@ from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer, PostS
 from .models import User, UserManager, Post, Type, Like
 from .image_processing.human_detection import detect_human, toArrayImg
 import base64
-import numpy as np
 from django.core.files.base import ContentFile
 
 
@@ -31,7 +30,7 @@ class PostAPI(APIView):
     process HTTP POST request.
     """
     permission_classes = (permissions.AllowAny,)
-
+    serializer_class = PostSerializer
 
     def post(self, request):
         """
@@ -41,31 +40,18 @@ class PostAPI(APIView):
         STEP2 : if human is in image, reject this post request and return error response.
         STEP3 : otherwise, add data to Post Database and return success response.
         """
-        # image, path = toArrayImg(request.data['image'], save=True)
-        # isinHuman = detect_human(image)
-        isinHuman = False
-        if isinHuman:
-            return Response(status=status.HTTP_412_PRECONDITION_FAILED)
-        else:
-            user_id = request.data["user_id"]
-            image = request.data["image"]
-            content = request.data["content"]
-            # try:
-            from PIL import Image
+        image = toArrayImg(request.data['image'].split("base64,")[-1])
+        isinHuman = detect_human(image)
 
-            apost = Post()
-            apost.user_id = User.objects.get(user_id=user_id)
-            # from django.core.files.images import ImageFile
-            # from django.core.files import File
-            # print(image)
-            # print(type(image))
-            # imgstr = request.data['image']
-            apost.image = self.decode_base64_file(image)
-            apost.content = content
-            apost.save()
-            return Response(status=status.HTTP_200_OK)
-            # except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if isinHuman:
+            return Response(status=status.HTTP_412_PROTECTION_FAILED)
+        else:
+            serializer = PostSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # ユーザ作成のView(POST)
 class AuthRegisterHuman(generics.CreateAPIView):
