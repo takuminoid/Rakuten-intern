@@ -32,6 +32,7 @@ class PostAPI(APIView):
     """
     permission_classes = (permissions.AllowAny,)
 
+
     def post(self, request):
         """
         process POST request.
@@ -40,9 +41,9 @@ class PostAPI(APIView):
         STEP2 : if human is in image, reject this post request and return error response.
         STEP3 : otherwise, add data to Post Database and return success response.
         """
-        image, path = toArrayImg(request.data['image'], save=True)
-        isinHuman = detect_human(image)
-
+        # image, path = toArrayImg(request.data['image'], save=True)
+        # isinHuman = detect_human(image)
+        isinHuman = False
         if isinHuman:
             return Response(status=status.HTTP_412_PRECONDITION_FAILED)
         else:
@@ -54,12 +55,12 @@ class PostAPI(APIView):
 
             apost = Post()
             apost.user_id = User.objects.get(user_id=user_id)
-            from django.core.files.images import ImageFile
-            from django.core.files import File
-            print(image)
-            print(type(image))
-            imgstr = request.data['image']
-            apost.image = imgstr
+            # from django.core.files.images import ImageFile
+            # from django.core.files import File
+            # print(image)
+            # print(type(image))
+            # imgstr = request.data['image']
+            apost.image = self.decode_base64_file(image)
             apost.content = content
             apost.save()
             return Response(status=status.HTTP_200_OK)

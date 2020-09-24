@@ -105,8 +105,8 @@ class Like(models.Model):
 class Post(models.Model):
     # id = models.AutoField(primary_key=True, unique=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
-    # image = models.ImageField(null=False)
-    image = Base64ImageField()
+    image = models.ImageField(upload_to="post_images/")
+    # image = Base64ImageField()
     content = models.CharField(max_length=255, blank=True, null=True)
 
     def create_post(self, user_id, image_path, content):
