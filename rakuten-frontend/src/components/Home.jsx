@@ -1,4 +1,4 @@
-import React, {useState, useEffect ,useRef, Fragment,useCallback} from 'react'
+import React, {useState, useEffect ,useRef, useCallback} from 'react'
 import { Waypoint } from 'react-waypoint';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -15,7 +15,13 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import GetPosts from '../api/getPostAPI'
+// import GetPosts from '../api/getPostAPI'           
+import AllPost from '../api/getPostAPI'
+import { CreateLike, DeleteLike } from '../api/postLike'
+
+import useGetUser from '../hooks/useGetUser'
+import getAnimal from '../api/getAnimal'
+
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Fab from '@material-ui/core/Fab';
@@ -28,40 +34,21 @@ import AddIcon from '@material-ui/icons/Add';
 import HomeIcon from '@material-ui/icons/Home';
 import PetsIcon from '@material-ui/icons/Pets';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import {Maintheme} from './theme';
-import {PostForm} from '../hooks/useUser';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import getAnimal from '../api/getAnimal' 
-
 import {
     fade,
     MuiThemeProvider,
     ThemeProvider,
     withStyles,
     createMuiTheme,} from '@material-ui/core/styles';
-import { DropzoneArea } from 'material-ui-dropzone';
-
-
-
-
-
 
 const useStyles = makeStyles((theme) => ({
     root: {
-    marginTop: "10%",
+    marginTop: "20%",
+    marginBottom: "20%",
     marginLeft: "10%",
     marginRight: "10%",
       maxWidth: "80%",
-    },
-    input: {
-        display: 'none'
     },
     paper: {
         paddingBottom: 50,
@@ -114,101 +101,100 @@ const useStyles = makeStyles((theme) => ({
         margin: '0 auto',
       },
   }));
+
+
+
 const Home = () => {
-    const {
-        handleContentChange, 
-        handleSubmit, handleImgChange,handl_user_idChange, 
-        state
-    } = PostForm()
-
-    // const onChange = e => {
-    //     console.log(state.password);
-    //     console.log(state.email);
-
-    //     handleContentChange(e)
-    //     setErrorMessage(null)
-
-
-
-
     const classes = useStyles();
     const [loading, setLoading] = useState(true)
-    const [Posts, setPosts] = useState([]) // レンダーするpostデータ
-    const [page, setpage] = useState(1) //ページ番号
+    const [error, setError] = useState(false)
+    const [Posts, setPosts] = useState([])
+    const [hasMore, setHasMore] = useState(false)
+    const [page, setpage] = useState(1)
+    const user = useGetUser()
 
-    var Post_data = {
-        images: [],
-        content: []
-    };
-    // postダイアログのsate
-    const [open, setOpen] = React.useState(false);
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
-    const handleClose = () => {
-      setOpen(false);
-    };
-    const onPostChange = e => {
-        handleContentChange(e.target.value)
-        Post_data.content= e.target.value
+    // const onChange =  async() => {
+    //     setLoading(true)
+    //     console.log("onChange");
+    //     setpage(page+1)
+    //     console.log(page);
+    //     // GetPosts({page})
+    //     AllPost()
+    //     .then((u) => {
+    //     setPosts(Posts.concat(u.hits))
+    //     // setPosts()
+    //         setLoading(false)
+    //     })
+    //     .catch((e) => {
+    //         throw new Error(e)
+    //     })
+    // }
 
+
+    useEffect(() => {
+        const p = async () => {
+            setLoading(true)
+            // GetPosts({page})
+            AllPost()
+            .then((p) => {
+                setPosts(p)
+                setLoading(false)
+            })
+            .catch((e) => {
+                throw new Error(e)
+            })
+        }
+        p()
+    }, [])
+
+    const gooded = async (post) => {
+        const l = []
+        post.map(i => {
+            l.push(i)
+        })
+        console.log(l)
+        return l
     }
-    const handlePostSubmmit =(e)=> {
-        e.preventDefault();
-        // handl_user_idChange(getAnimal().user_id)
 
-        handleClose();
-        handleSubmit(state)
-    };
-
-    // 画像アップロード
-    const handleCapture = ({ target }) => {
-        const fileReader = new FileReader();
-        const name = target.accept.includes('image') ? 'images' : 'videos';
-
-        fileReader.readAsDataURL(target.files[0]);
-        fileReader.onload = (e) => {
-            handleImgChange(e.target.result);
-
-            // setimage(e.target.result);
-            // Post_data.images=e.target.result
-
+    // TODO 2回連続いいねがされた時の制限の掛け方を考える
+    const _renderItems = () => {
+        const domain = 'http://localhost:8000'
+        const incrementGood = (id) => { 
+            Posts[id-1].like += 1
+            Posts[id-1].is_liked = true
+        }
+        const decrementGood = (id) => { 
+            Posts[id-1].like -= 1
+            Posts[id-1].is_liked = false
+        }
+        const handleGood = async (id, good) => {
+            const uid = user.id
+            const goodRequest = good 
+            ? DeleteLike(id, uid) 
+            : CreateLike(id, uid)
+            goodRequest
+            .then(() => {
+                good ? (
+                    decrementGood(id)
+                ) : (
+                    incrementGood(id)
+                )
+                gooded(Posts)
+                .then((g) => {
+                    setPosts(g)
+                })
+                .catch(e => {
+                    throw new Error(e)
+                })
+            })
+            .catch((e) => {
+                throw new Error(e)
+            })
         }
 
-
-    };
-
-    const onChange =  async() => {
-        setLoading(true)
-        console.log("onChange");
-        setpage(page+1)
-        console.log(page);
-        GetPosts({page})
-        .then((u) => {
-        setPosts(Posts.concat(u.hits))
-        console.log(Posts);
-        // setPosts()
-            setLoading(false)
-        })
-        .catch((e) => {
-            throw new Error(e)
-        })
-    }
-    
-    useEffect( async() => {
-        setLoading(true)
-        GetPosts({page})
-        .then((u) => {
-            setPosts(u.hits)
-            setLoading(false)
-        })
-        .catch((e) => {
-            throw new Error(e)
-        })
-    }, [])
-    
-    const _renderItems= function() {
-        return Posts.map(function(imageUrl, index) {
+        return Posts.map(function(p) {
+            // TODO ここをtrue/falseに変更する
+            const goodYet = p.is_liked ? true : false 
           return (
               <div >
             {/* <img
@@ -221,7 +207,7 @@ const Home = () => {
               <p>{imageUrl.tags} </p>
               <p>{imageUrl.likes} </p> */}
 
-            <Card className={classes.root}>
+            <Card className={classes.root} key={p.id}>
                 {/* <CardHeader
                     avatar={
                     <Avatar aria-label="recipe" src={imageUrl.userImageURL} className={classes.avatar}>
@@ -233,23 +219,19 @@ const Home = () => {
                 /> */}
                 <CardMedia
                     className={classes.media}
-                    image={imageUrl.largeImageURL}
+                    image={domain+p.image}
                     // title="Paella dish"
                 />
                 <CardContent>
                 
-            
-
                 <Grid container spacing={2}>
                 <Grid item xs={3}>
-                <Avatar aria-label="recipe" src={imageUrl.userImageURL} className={classes.avatar}>
-                        R
+                <Avatar aria-label="recipe" src={p.user_id} className={classes.avatar}>
+                        {p.user_id.slice(0,1)}
                     </Avatar></Grid>
                 <Grid item xs={9}>
-
                     <Typography variant="body2" color="textSecondary" component="p">
-                    I am a cat. Cats are good pets, for they are clean and are not noisy.
-                    I would have gotten the promotion, but my attendance wasn’t good enough.
+                    {p.content}
                     </Typography></Grid>
 
                     </Grid>
@@ -257,9 +239,18 @@ const Home = () => {
                 </CardContent>
                 <CardActions disableSpacing className={classes.icons}>
                 <Grid item xs/>
-                    <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
-                    </IconButton>
+                    {goodYet ? (
+                        <IconButton aria-label="add to favorites" color="secondary" onClick={() => handleGood(p.id, goodYet)}>
+                            <FavoriteIcon />
+                            {p.like}
+                        </IconButton>
+                    ) : (
+                        <IconButton aria-label="delete to favorites" onClick={() => handleGood(p.id, goodYet)}>
+                            <FavoriteIcon />
+                            {p.like}
+                        </IconButton>
+                    )}
+                    
                     <IconButton aria-label="share">
                     <ShareIcon />
                     </IconButton>
@@ -270,56 +261,6 @@ const Home = () => {
 
                     );
                     });
-      }
-    const _openPostDialog= function() {
-        return(
-            <div>
-            <form  onSubmit={handlePostSubmmit} className={classes.form,classes.sign_in_card} >
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-              <DialogTitle id="form-dialog-title">Posts</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  To subscribe to this website, please enter your email address here. We will send updates
-                  occasionally.
-                </DialogContentText>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="content"
-                  label="content"
-                  type="content"
-                  value={state.content} 
-                  onChange={onPostChange}
-                  placeholder="I am cat cataaafajfoijeoijfa cata aafafefa"
-                  fullWidth
-                />
-              </DialogContent>
-              <Fragment>
-                <input
-                    accept="image/*"
-                    className={classes.input}
-                    id="icon-button-photo"
-                    onChange={handleCapture}
-                    type="file"
-                />
-                <label htmlFor="icon-button-photo">
-                    <IconButton color="secondary" component="span">
-                        <PhotoCamera />
-                    </IconButton>
-                </label>
-            </Fragment>
-              <DialogActions>
-                <Button type="button" onClick={handleClose} color="inherit">
-                  Cancel
-                </Button>
-                <Button  type="submit" onClick={handlePostSubmmit} color="secondary">
-                  Subscribe
-                </Button>
-              </DialogActions>
-            </Dialog>
-            </form>
-          </div>
-          )
       }
     // const data =getAnimal() dom.map(u => ( <User {...u} /> ))
     // console.log(posts);
@@ -333,10 +274,10 @@ const Home = () => {
                     Animar
                 </Typography>
                 </   AppBar>
-                <_openPostDialog />
-
                 <_renderItems />
-                <Waypoint onEnter={onChange} />
+                {/* {Posts.map((p) => (<PostContent p={p} />))} */}
+            
+                {/* <Waypoint onEnter={onChange} /> */}
 
                 {loading ? (<h1>Loading</h1>) : <div></div>}
 
@@ -345,7 +286,7 @@ const Home = () => {
                         <IconButton  color="inherit" aria-label="open drawer"  >
                             <HomeIcon />
                         </IconButton>
-                        <Fab color="secondary" aria-label="add" className={classes.fabButton} onClick={handleClickOpen} >
+                        <Fab color="secondary" aria-label="add" className={classes.fabButton} >
                             <AddIcon />
                         </Fab>
                         <div className={classes.grow} />

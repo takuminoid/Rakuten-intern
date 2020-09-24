@@ -198,7 +198,7 @@ class GetAllPost(APIView):
             post_resp = []
             for i in post:
                 is_liked = False # current_userがその投稿をいいねしてるか
-                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0:
+                if Like.objects.filter(post_id=i.id, user_id=current_user_id).count() > 0:
                     is_liked = True
                 else:
                     is_liked = False
