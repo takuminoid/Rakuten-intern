@@ -6,6 +6,10 @@ from django.test import Client
 # ok
 
 class LikeTest(TestCase):
+    """
+    author : Nakagaki Yuto
+    date   : 2020/09/23
+    """
 
     # 何も登録しなければレコードの数は0個
     def test_is_empty(self):
@@ -40,8 +44,19 @@ class LikeTest(TestCase):
         self.assertEqual(actual_like.user_id, User.objects.get(id=1))
 
     # Viewのテスト
-    # def test_view(self):
-    #     client = Client()
-    #     c.post('/like/', {})
-    #     self.failUnlessEqual(response.status_code, 200)
+    def test_view(self):
+
+        # User, Post, Likeを登録
+        user = User(user_id='testuser', mail='test@gmail.com')
+        user.set_password('testpassword')
+        user.save()
+        post = Post(user_id=User.objects.get(id=1), image='', content='test')
+        post.save()
+        like = Like(post_id=Post.objects.get(id=1), user_id=User.objects.get(id=1))
+        like.save()
+
+        # レスポンスのテスト
+        self.c = Client()
+        response = self.c.delete('/api/like/', {'post_id' : 1, 'user_id' : 1})
+        self.failUnlessEqual(response.status_code, 200)
     
