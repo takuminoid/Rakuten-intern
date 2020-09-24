@@ -1,6 +1,7 @@
 import React, {useEffect, useState } from 'react'
 
 import loginA from '../api/login'
+import { useHistory } from 'react-router-dom'
 
 const initialState = {
     user_id: '', 
@@ -15,6 +16,7 @@ const useLogin = () => {
     const [token, setToken] = useState({})
 
     const [state, setState] = useState(initialState)
+    let history = useHistory()
 
     const handleChange = e => {
         setState({...state, [e.target.name]: e.target.value })
@@ -38,7 +40,12 @@ const useLogin = () => {
         })
         .then((resp) => {
             setToken(resp)
-            localStorage.setItem('token', resp.token)
+            if (resp.token != undefined) {
+                localStorage.setItem('token', resp.token)
+                history.push('/main')
+            } else {
+                alert('認証できませんでした')
+            }
         })
         .catch((e) => {
             return e

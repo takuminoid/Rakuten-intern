@@ -134,7 +134,9 @@ const signup_style = makeStyles((theme) => ({
     avatar: {
       margin: theme.spacing(1),
       backgroundColor: '#FFF'
-    },
+    },    input: {
+      display: 'none'
+  },
     animar: {
     marginBottom: theme.spacing(5),
     },
@@ -180,5 +182,18 @@ const signup_style = makeStyles((theme) => ({
         padding:" 20px"
       }
   }));
+
+
+const error_page = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(10),
+    alignItems: 'center',
+    backgroundColor: '#D97D54'
+  },
+  img: {
+    marginTop: theme.spacing(10),
+    width: "50vw"
+  }
+}))
 export default themeSignUp;
-export  {signup_style,Maintheme};
+export  {signup_style,Maintheme, error_page};

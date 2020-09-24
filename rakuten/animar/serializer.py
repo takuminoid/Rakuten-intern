@@ -34,6 +34,9 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class AnimalSerializer(serializers.ModelSerializer):
+    '''
+    Author: Takumi Sato
+    '''
     password = serializers.CharField(write_only=True, required=False)
     image = Base64ImageField(required=False)
     class Meta:
@@ -54,6 +57,9 @@ class AnimalSerializer(serializers.ModelSerializer):
         return User.objects.create_user(mail=mail, user_id=user_id, password=password, name=name, sex=sex, type=type, image=image, birthday=birthday, residence=residence, profile=profile)
 
 class LikeSerializer(serializers.ModelSerializer):
+    '''
+    Author: Yuto Nakagaki
+    '''
     class Meta:
         model = Like
         fields = ('post_id', 'user_id')

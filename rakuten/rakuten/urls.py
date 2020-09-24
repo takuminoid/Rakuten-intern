@@ -27,7 +27,6 @@ urlpatterns = [
     url(r'^login/', obtain_jwt_token),
     url(r'^api/',  include('animar.urls')),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-    # url(r'^mypage/$', AuthInfoGetView.as_view()),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
