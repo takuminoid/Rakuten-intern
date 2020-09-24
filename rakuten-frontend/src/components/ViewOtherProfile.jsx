@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 
 import getAnimal,{getOtherAnimal} from '../api/getAnimal'
+import { useHistory } from 'react-router-dom'
 
 
 //TODO show image
@@ -20,6 +21,7 @@ const User = ({name, sex, type, birthday, residence, profile}) => {
 const ViewProfile = () => {
     const [animal, setAnimal] = useState([])
     const [loading, setLoading] = useState(true)
+    let history = useHistory()
 
     const dom = [animal]
 
@@ -32,7 +34,7 @@ const ViewProfile = () => {
             setLoading(false)
         })
         .catch((e) => {
-            throw new Error(e)
+            history.push('/error')
         })
     }, [])
 

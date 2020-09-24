@@ -138,7 +138,7 @@ const ViewProfile = () => {
     const [loading, setLoading] = useState(true)
     const [Posts, setPosts] = useState([]) // レンダーするpostデータ
     const [avata_image, setpage] = useState("") //ページ番号
-    const history = useHistory();
+    let history = useHistory()
 
 
     const dom = [animal]
@@ -164,8 +164,20 @@ const ViewProfile = () => {
     //         throw new Error(e)
     //     })
     // }, [])
+
+    useEffect( async() => {
+        getAnimal()
+        .then((u) => {
+            setAnimal(u)
+            setLoading(false)
+        })
+        .catch((e) => {
+            history.push('/error')
+        })
+    }, [])
     const calculate_age=(data)=> { 
         var birthday = new Date(data[0], data[1], data[2]);
+
 
         var diff_ms = Date.now() - birthday.getTime();
         var age_dt = new Date(diff_ms); 

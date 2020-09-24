@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
+import toJson from '../toJson/toJson'
 
+var token = localStorage.getItem("token");
 
 const GetPosts = async ({page}) => {
-
     const params  = {
       searchText: '',
       per_page: 15,
@@ -16,5 +17,17 @@ const GetPosts = async ({page}) => {
     const data = await resp.json()
     return await data
   }
-export default GetPosts
+
+const AllPost = async () => {
+  const resp = await fetch(`http://localhost:8000/api/getpost/`, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          'Authorization': `JWT ${token}`
+        }
+    })
+    return await toJson(resp)
+}
+// export default GetPosts
+export default AllPost
 

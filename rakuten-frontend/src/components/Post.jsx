@@ -122,7 +122,7 @@ const useStyles = makeStyles((theme) => ({
         margin: '3%',
         marginTop: '3%',
         // position: 'absolute',
-        width: '100%',
+        // width: '100%',
         top: 0,
         left: 0,
         zIndex: 0,

@@ -82,7 +82,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
     Author: Takumi Sato
     About: Create User. You can register the animal information.
     Use Example:
-        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': (base64文字列), 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
+        data = {'user_id': 'kanemura', 'mail': 'kanemura@gmail.com', 'password': 'hogehoge', 'name': 'osushi','image': '(base64文字列)', 'sex': 0, 'type': 'cat', 'residence': 'Tokyo', 'birthday': '2000-09-15', 'profile': 'test'}
         r = requests.post('http://localhost:8000/api/register/animal/', data=data)
         r.json() # {'mail': 'kanemura@gmail.com', 'user_id': 'kanemura', 'name': 'osushi', 'image': None, 'sex': 0, 'type': 4, 'birthday': '2000-09-15', 'residence': 'Tokyo', 'profile': 'test'}
         r2 = requests.get('http://localhost:8000/api/user/get/', data={'user_id': 'kanemura'})
@@ -198,7 +198,7 @@ class GetAllPost(APIView):
             post_resp = []
             for i in post:
                 is_liked = False # current_userがその投稿をいいねしてるか
-                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0:
+                if Like.objects.filter(post_id=i.id, user_id=current_user_id).count() > 0:
                     is_liked = True
                 else:
                     is_liked = False
@@ -222,7 +222,7 @@ class GetAllPost(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetFilteredPost(APIView):
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
     '''
     Author: Takumi Sato
     About: You can get filtered posts. "Filtered" means that you can select type of animal on posts.
