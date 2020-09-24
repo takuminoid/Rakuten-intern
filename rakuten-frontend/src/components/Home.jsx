@@ -147,30 +147,6 @@ const Home = () => {
         p()
     }, [])
 
-    // const incrementGood = (id) => Posts[id-1].like += 1
-    // const decrementGood = (id) => Posts[id-1].like -= 1
-    // const handleGood = async (id, good) => {
-    //     const uid = user.user_id
-    //     const goodRequest = good 
-    //     ? DeleteLike(id, uid) 
-    //     : CreateLike(id, uid)
-    //     goodRequest
-    //     .then(() => {
-    //         good ? (
-    //             decrementGood(id)
-    //         ) : (
-    //             incrementGood(id)
-    //         )
-    //     })
-    //     .catch((e) => {
-    //         throw new Error(e)
-    //     })
-    // }
-
-    // useEffect(() => {
-    //     setPosts(Posts)
-    // }, [Posts])
-
     const gooded = async (post) => {
         const l = []
         post.map(i => {
@@ -215,11 +191,6 @@ const Home = () => {
                 throw new Error(e)
             })
         }
-        console.log(Posts)
-
-        useEffect(() => {
-            setPosts(Posts)
-        }, [Posts])
 
         return Posts.map(function(p) {
             // TODO ここをtrue/falseに変更する
@@ -253,8 +224,6 @@ const Home = () => {
                 />
                 <CardContent>
                 
-            
-
                 <Grid container spacing={2}>
                 <Grid item xs={3}>
                 <Avatar aria-label="recipe" src={p.user_id} className={classes.avatar}>
