@@ -152,23 +152,23 @@ const Home = () => {
         post.map(i => {
             l.push(i)
         })
+        console.log(l)
         return l
     }
 
     // TODO 2回連続いいねがされた時の制限の掛け方を考える
-    // TODO takurintonとhogeのところをtrue/falseに変更する
     const _renderItems = () => {
         const domain = 'http://localhost:8000'
         const incrementGood = (id) => { 
             Posts[id-1].like += 1
-            Posts[id-1].user_id = 'takurinton'
+            Posts[id-1].is_liked = true
         }
         const decrementGood = (id) => { 
             Posts[id-1].like -= 1
-            Posts[id-1].user_id = 'hoge'
+            Posts[id-1].is_liked = false
         }
         const handleGood = async (id, good) => {
-            const uid = user.user_id
+            const uid = user.id
             const goodRequest = good 
             ? DeleteLike(id, uid) 
             : CreateLike(id, uid)
@@ -194,7 +194,7 @@ const Home = () => {
 
         return Posts.map(function(p) {
             // TODO ここをtrue/falseに変更する
-            const goodYet = p.user_id === 'takurinton' ? true : false 
+            const goodYet = p.is_liked ? true : false 
           return (
               <div >
             {/* <img
