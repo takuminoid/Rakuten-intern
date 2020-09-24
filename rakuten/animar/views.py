@@ -44,7 +44,7 @@ class PostAPI(APIView):
         isinHuman = detect_human(image)
 
         if isinHuman:
-            return Response(status=status.HTTP_412_PROTECTION_FAILED)
+            return Response("We cannot accept your image because human is in it.", status=status.HTTP_412_PRECONDITION_FAILED)
         else:
             serializer = PostSerializer(data=request.data)
             if serializer.is_valid():

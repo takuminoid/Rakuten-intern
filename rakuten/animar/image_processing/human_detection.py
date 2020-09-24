@@ -5,6 +5,7 @@ description :
 this script detect that human is in image or not.
 you should note that we detect human only by naive method.
 """
+
 import numpy as np
 import argparse
 import base64
@@ -14,14 +15,13 @@ import os.path as osp
 CURRENT_DIR = osp.dirname(__file__)
 
 
-def toArrayImg(data_bs64: bytes, save: bool = True) -> np.ndarray:
+def toArrayImg(data_bs64: str) -> np.ndarray:
     """
     convert base64 data to ndarray.
 
     Parameter
     -----------
     data_bs64 : base64 data
-    save : whether save image or not.
 
     Return
     -----------
@@ -30,9 +30,7 @@ def toArrayImg(data_bs64: bytes, save: bool = True) -> np.ndarray:
     decoded = base64.b64decode(data_bs64)
     array = np.frombuffer(decoded, dtype=np.uint8)
     img = cv2.imdecode(array, cv2.IMREAD_COLOR)
-    path = osp.join(CURRENT_DIR, "test", "test.png")
-    cv2.imwrite(path, img)
-    return img, path
+    return img
 
 
 def output_formatter(detector):

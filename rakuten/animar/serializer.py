@@ -25,12 +25,10 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ('id', 'user_id', 'image', 'content')
 
     def create(self, data):
-        user_id = User.objects.get(id=self.data['user_id'])
+        user_id = User.objects.get(id=int(self.data['user_id']))
         image = data['image']
         content = self.data['content']
         return Post.create_post(self, user_id=user_id, image=image, content=content)
-        # print(**data)
-        # return Post.objects.create(**data)
 
 
 class AnimalSerializer(serializers.ModelSerializer):
