@@ -263,7 +263,6 @@ class GetFilteredPost(APIView):
 
 
 class PostLike(generics.CreateAPIView):
-    permission_classes = (permissions.AllowAny,)
     """
     author : Nakagaki Yuto
     date   : 2020/09/18
