@@ -94,9 +94,14 @@ const AnimalForm = () => {
         .then((u) => {
             localStorage.removeItem('userinfo')
             loginForSignup(JSON.parse(localStorage.getItem('loginfo')))
-            localStorage.removeItem('loginfo')
-            setAnimalState(AnimalState)
-            setLoading(false)
+            .then((u) => {         
+                localStorage.removeItem('loginfo')
+                setLoading(false)
+                history.push('/main')
+            })
+            .catch((e) => {
+                history.push('/error')
+            })
         })
         .catch((e) => {
             history.push('/error')

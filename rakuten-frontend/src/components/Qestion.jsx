@@ -39,13 +39,19 @@ const Qestion= ({signup_style,QestionSubmit}) =>  {
         .then((u) => {
             localStorage.removeItem('userinfo')
             loginForSignup(JSON.parse(localStorage.getItem('loginfo')))
-            localStorage.removeItem('loginfo')
-            setLoading(false)
+            .then((u) => {         
+                localStorage.removeItem('loginfo')
+                setLoading(false)
+                history.push('/main')
+            })
+            .catch((e) => {
+                history.push('/error')
+            })
         })
         .catch((e) => {
             history.push('/error')
         })
-        history.push('/main')
+        
       }
     const onSubmit = e => {
         e.preventDefault()

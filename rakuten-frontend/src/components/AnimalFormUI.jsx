@@ -32,7 +32,7 @@ import {
 const AnimalFormUI= ({signup_style}) =>  {
     const history = useHistory();
     const handleToFeed = () => {
-      history.push('/main')
+      //history.push('/main')
     }
     const classes = signup_style();
     const {

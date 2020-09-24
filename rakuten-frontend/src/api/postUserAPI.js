@@ -32,6 +32,7 @@ const postAnimal = async (body) => {
     return toJson(resp)
 }
 const postPost = async (body) => { 
+    body.user_id = 1
     const resp = await fetch(`http://localhost:8000/api/post/`, {
         method: "POST",
         headers: {
