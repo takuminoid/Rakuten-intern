@@ -219,14 +219,14 @@ const AnimalFormUI= ({signup_style}) =>  {
             <RedditTextField
                 variant="outlined"
                 fullWidth
-                name="barthday"
-                label="Barthday"
+                name="birthday"
+                label="Birthday"
                 type="name"
                 id="name"
-                autoComplete="Barthday"
-                value={state.barthday} 
+                autoComplete="Birthday"
+                value={state.birthday} 
                 onChange={onChange} 
-                placeholder="eg:2000/04/01" //todo
+                placeholder="eg:2000-04-01" //todo
                             /> 
             </Grid>
             <Grid item xs={12}>
