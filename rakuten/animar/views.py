@@ -15,9 +15,9 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 from rest_framework.views import APIView
-from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer
+from .serializer import HumanSerializer, AnimalSerializer, LikeSerializer, PostSerializer
 from .models import User, UserManager, Post, Type, Like
-from .image_processing.human_detection import detect_human, toNdarray
+from .image_processing.human_detection import detect_human, toArrayImg
 import base64
 import numpy as np
 from django.core.files.base import ContentFile
@@ -32,7 +32,6 @@ class PostAPI(APIView):
     """
     permission_classes = (permissions.AllowAny,)
 
-
     def post(self, request):
         """
         process POST request.
@@ -41,24 +40,63 @@ class PostAPI(APIView):
         STEP2 : if human is in image, reject this post request and return error response.
         STEP3 : otherwise, add data to Post Database and return success response.
         """
+        image, path = toArrayImg(request.data['image'], save=True)
+        isinHuman = detect_human(image)
 
-        try:
-            user_id = request.data['user_id']
-            image = request.data['image']
-            content = request.data['content']
+        if isinHuman:
+            return Response(status=status.HTTP_412_PRECONDITION_FAILED)
+        else:
+            user_id = request.data["user_id"]
+            image = request.data["image"]
+            content = request.data["content"]
+            # try:
+            from PIL import Image
 
-            image = toNdarray(image)
-            isinHuman = detect_human(image)
-
-            if isinHuman:
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                user = User.objects.get(user_id=user_id)
-                post_db = Post(user_id=user, image=image, content=content)
-                post_db.save()
-                return Response([request.data])
-        except:
+            apost = Post()
+            apost.user_id = User.objects.get(user_id=user_id)
+            from django.core.files.images import ImageFile
+            from django.core.files import File
+            print(image)
+            print(type(image))
+            imgstr = request.data['image']
+            apost.image = imgstr
+            apost.content = content
+            apost.save()
+            return Response(status=status.HTTP_200_OK)
+            # except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#  class PostAPI(APIView):
+#     """
+#     author : Takahiro Suzuki
+#     date   : 2020/09/18
+#     description :
+#     process HTTP POST request.
+#     """
+#     permission_classes = (permissions.AllowAny,)
+#     serializer_class = PostSerializer
+
+
+#     def post(self, request):
+#         """
+#         process POST request.
+#         overview of this method is following:
+#         STEP1 : detect human is in posted image or not.
+#         STEP2 : if human is in image, reject this post request and return error response.
+#         STEP3 : otherwise, add data to Post Database and return success response.
+#         """
+#         image = toArrayImg(request.data['image'])
+#         isinHuman = detect_human(image)
+
+#         if isinHuman:
+#             return Response(status=status.HTTP_412_PRECONDITION_FAILED)
+#         else:
+#             serializer = PostSerializer(data=request.data)
+#             if serializer.is_valid():
+#                 serializer.save()
+#                 return Response(serializer.data, status=status.HTTP_200_OK)
+#             else:
+#                 return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # ユーザ作成のView(POST)

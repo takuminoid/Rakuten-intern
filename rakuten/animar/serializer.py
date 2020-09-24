@@ -1,7 +1,7 @@
 from django.contrib.auth import update_session_auth_hash
 from rest_framework import serializers
 
-from .models import User, UserManager, Like, Type
+from .models import User, UserManager, Like, Type, Post
 from drf_extra_fields.fields import Base64ImageField
 
 class HumanSerializer(serializers.ModelSerializer):
@@ -16,6 +16,22 @@ class HumanSerializer(serializers.ModelSerializer):
         user_id = self.data['user_id']
         password = data['password']
         return User.objects.create_user(mail=mail, user_id=user_id, password=password)
+
+
+class PostSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(required=True)
+    class Meta:
+        model = Post
+        fields = ('id', 'user_id', 'image', 'content')
+
+    def create(self, data):
+        # user_id = self.data['user_id']
+        # image = data['image']
+        # content = self.data['content']
+        # return Post.objects.create(user_id=user_id, image=image, content=content)
+        print(**data)
+        return Post.objects.create(**data)
+
 
 class AnimalSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)

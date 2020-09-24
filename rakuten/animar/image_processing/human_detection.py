@@ -9,23 +9,30 @@ import numpy as np
 import argparse
 import base64
 import cv2
+import os.path as osp
+
+CURRENT_DIR = osp.dirname(__file__)
 
 
-def toNdarray(data_bs64: bytes) -> np.ndarray:
+def toArrayImg(data_bs64: bytes, save: bool = True) -> np.ndarray:
     """
     convert base64 data to ndarray.
 
     Parameter
     -----------
     data_bs64 : base64 data
+    save : whether save image or not.
 
     Return
     -----------
     array : converted base64 data
     """
-    decoded = base64.decodebytes(data_bs64)
+    decoded = base64.b64decode(data_bs64)
     array = np.frombuffer(decoded, dtype=np.uint8)
-    return array
+    img = cv2.imdecode(array, cv2.IMREAD_COLOR)
+    path = osp.join(CURRENT_DIR, "test", "test.jpg")
+    cv2.imwrite(path, img)
+    return img, path
 
 
 def output_formatter(detector):
@@ -55,6 +62,8 @@ def output_formatter(detector):
         img : image with boundingbox
         mask : mask image which is created based on boundingbox
         """
+        assert osp.isfile(cascade_path), "cascadefile not existed."
+
         rect = detector(img, cascade_path)
         mask = np.zeros_like(img)
         for x, y, w, h in rect:
@@ -68,7 +77,7 @@ def output_formatter(detector):
 
 
 @output_formatter
-def detect_face(img: np.ndarray, face_cascade_path: str = "./haarcascade_frontalface_default.xml", ) -> list:
+def detect_face(img: np.ndarray, face_cascade_path: str) -> list:
     """
     this is a face detector, and following function 'detect_eye' is very similar with this function (so I omitted doc string).
     you should note that this function is decoreted by 'output_formatter' function.
@@ -91,7 +100,7 @@ def detect_face(img: np.ndarray, face_cascade_path: str = "./haarcascade_frontal
 
 
 @output_formatter
-def detect_eye(img: np.ndarray, eye_cascade_path: str = "./haarcascade_eye.xml") -> list:
+def detect_eye(img: np.ndarray, eye_cascade_path: str) -> list:
     eye_cascade = cv2.CascadeClassifier(eye_cascade_path)
     gray_img = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2GRAY)
 
@@ -117,8 +126,8 @@ def detect_human(img: np.ndarray) -> bool:
     -----------
     humanIsin : boolean. If human is in the image, then return True, otherwise False.
     """
-    _, mask1 = detect_face(img, "./haarcascades/haarcascade_frontalface_default.xml")
-    _, mask2 = detect_eye(img, "./haarcascades/haarcascade_eye.xml")
+    _, mask1 = detect_face(img, osp.join(CURRENT_DIR, "haarcascades/haarcascade_frontalface_default.xml"))
+    _, mask2 = detect_eye(img, osp.join(CURRENT_DIR, "haarcascades/haarcascade_eye.xml"))
 
     dst = cv2.bitwise_and(mask1, mask2)
     humanIsin = np.sum(dst) > 0

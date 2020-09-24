@@ -5,6 +5,8 @@ from django.contrib.auth.models import (
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.core.files import File
+from drf_extra_fields.fields import Base64ImageField
 
 
 class CustomUserManager(UserManager):
@@ -107,9 +109,29 @@ class Like(models.Model):
         return post_id
 
 
-class Post(models.Model):
-    id = models.AutoField(primary_key=True, unique=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='post_images/')
-    content = models.TextField()
+# class Post(models.Model):
+#     id = models.AutoField(primary_key=True, unique=True)
+#     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
+#     image = models.ImageField(upload_to='post_images/', null=False)
+#     content = models.TextField(blank=True, null=True)
 
+#     def create_post(self, user_id, image, content):
+#         user = User.objects.get(user_id=user_id)
+#         post_db = Post(user_id=user, image=image, content=content)
+#         post_db.save()
+#         return user_id
+
+class Post(models.Model):
+    # id = models.AutoField(primary_key=True, unique=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
+    # image = models.ImageField(null=False)
+    image = Base64ImageField()
+    content = models.CharField(max_length=255, blank=True, null=True)
+
+    def create_post(self, user_id, image_path, content):
+        raise Exception
+        user = User.objects.get(user_id=user_id)
+        image = File(open(image_path))
+        post_db = Post(user_id=user, image=image, content=content)
+        post_db.save()
+        return user_id
