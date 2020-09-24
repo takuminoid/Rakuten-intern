@@ -47,21 +47,13 @@ const Qestion= ({signup_style,QestionSubmit}) =>  {
         })
         history.push('/main')
       }
-
-
-
     const onSubmit = e => {
         e.preventDefault()
         QestionSubmit()
-         
     } 
 
     return(
     <div className={classes.paper}>
-
-
-    
-    
     <Typography   className={classes.animar} color="secondary" component="h1" variant="h4">
     animar
     </Typography>
