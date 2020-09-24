@@ -26,4 +26,18 @@ const getAnimal = async () => {
     return await toJson(resp)
 }
 
+const getOtherAnimal = async (body) => {
+
+    const urls = 'http://localhost:8000/api/user/get/' + body + '/'
+    console.log(urls)
+    const resp = await fetch(urls, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: (headers),
+    })
+    //console.log(resp.json())
+    return await toJson(resp)
+}
+
 export default getAnimal
+export {getOtherAnimal}

@@ -4,6 +4,10 @@ from animar.models import Post, User
 # ok
 
 class PostTest(TestCase):
+    """
+    author : Nakagaki Yuto
+    date   : 2020/09/23
+    """
 
     # 何も登録しなければレコードの数は0個
     def test_is_empty(self):

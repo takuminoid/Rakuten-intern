@@ -81,6 +81,10 @@ class Type(models.Model):
         return self.name
 
 class Like(models.Model):
+    """
+    author : Nakagaki Yuto
+    date   : 2020/09/18
+    """
     post_id = models.ForeignKey('Post', on_delete=models.CASCADE)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
 

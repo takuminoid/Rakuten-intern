@@ -96,7 +96,7 @@ class AuthRegisterAnimal(generics.CreateAPIView):
                 typeob.save()
                 data['type'] = typeob.id
 
-        if ";base64," in data['image']:
+        if data['image'] is not None:
             format, imgstr = data['image'].split(";base64,")
             data['image'] = imgstr
 
@@ -191,7 +191,7 @@ class GetAllPost(APIView):
             post_resp = []
             for i in post:
                 is_liked = False # current_userがその投稿をいいねしてるか
-                if Like.objects.filter(id=i.id, user_id=current_user_id).count() > 0:
+                if Like.objects.filter(post_id=i.id, user_id=current_user_id).count() > 0:
                     is_liked = True
                 else:
                     is_liked = False
@@ -215,7 +215,7 @@ class GetAllPost(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetFilteredPost(APIView):
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
     '''
     Author: Takumi Sato
     About: You can get filtered posts. "Filtered" means that you can select type of animal on posts.
@@ -256,7 +256,6 @@ class GetFilteredPost(APIView):
 
 
 class PostLike(generics.CreateAPIView):
-    permission_classes = (permissions.AllowAny,)
     """
     author : Nakagaki Yuto
     date   : 2020/09/18
