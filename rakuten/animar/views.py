@@ -127,10 +127,14 @@ class GetAuthInfo(generics.RetrieveAPIView):
     serializer_class = AnimalSerializer
 
     def get(self, request, format=None):
-        try: # imageがない場合のエラー処理
+        try: # imageがない場合の処理
             image_url = request.user.image.url
         except:
             image_url = None
+        try:
+            tname = request.user.type.name
+        except: # typeがない場合の処理
+            tname = None
         return Response(data={
             'id': request.user.id,
             'mail': request.user.mail,
@@ -139,7 +143,7 @@ class GetAuthInfo(generics.RetrieveAPIView):
             'name': request.user.name,
             'image': image_url, # パスを返す
             'sex': request.user.sex,
-            'type': request.user.type.name, # nameを返す
+            'type': tname, # nameを返す
             'birthday': request.user.birthday,
             'residence': request.user.residence,
             'profile': request.user.profile,
