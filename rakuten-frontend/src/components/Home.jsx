@@ -158,6 +158,11 @@ const Home = () => {
     const user = useGetUser()
     let history = useHistory()
 
+    const handleToLogout = () => {
+        localStorage.clear()
+      history.push('/signup')
+    }
+
     // const onChange =  async() => {
     //     setLoading(true)
     //     console.log("onChange");
@@ -318,6 +323,9 @@ const Home = () => {
                 <Typography  position="fixed" className={classes.text} variant="h5" gutterBottom  >
                     Animar
                 </Typography>
+                <Link href="#" onClick={handleToLogout}  color="inherit" >
+                       logout
+                        </Link>
                 </   AppBar>
                 <_renderItems />
                 {/* {Posts.map((p) => (<PostContent p={p} />))} */}
