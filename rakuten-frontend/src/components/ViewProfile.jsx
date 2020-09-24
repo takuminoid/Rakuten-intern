@@ -38,6 +38,8 @@ import {Maintheme} from './theme';
 import {PostForm} from '../hooks/useUser';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import getAnimal,{getOtherAnimal} from '../api/getAnimal'
+import Link from '@material-ui/core/Link';
+import { useHistory } from "react-router-dom";
 
 import {
     fade,
@@ -76,11 +78,12 @@ import {
             // box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 0px 6px 10px 0px rgba(0,0,0,0.14), 0px 1px 18px 0px rgba(0,0,0,0.12);
     
         },
-        icons:{
+        userprof:{
+            marginTop: "5%"
     
         },
-        avatar: {
-          
+        avatar: { width:'4em' , height: '4em',  marginTop: "20%"
+
         },
         subheader: {
             backgroundColor: theme.palette.background.paper,
@@ -94,6 +97,13 @@ import {
           },
           grow: {
             flexGrow: 1,
+          },
+          text: {
+            fontSize:"1em",
+          },
+          left_text: {
+            fontSize:"1em",
+            textAlign: "start",
           },
           fabButton: {
             position: 'absolute',
@@ -128,19 +138,20 @@ const ViewProfile = () => {
     const [loading, setLoading] = useState(true)
     const [Posts, setPosts] = useState([]) // レンダーするpostデータ
     const [avata_image, setpage] = useState("") //ページ番号
+    const history = useHistory();
 
 
     const dom = [animal]
     const DumyAnimalState = {
         name: "Somo", 
         type: "Cat",
-        barthday: 2020/10/20,
+        barthday: "2000/10/20",
         sex: 0,
         residence: "Chiba",
         // email: null,
         // password: null,
         image:null,
-        profile:"I am Cat imao",
+        profile:"Open the door to let me in. You know I am cat, A new, scary specie. Open the door now.",
     }
     
     // useEffect( async() => {
@@ -153,35 +164,91 @@ const ViewProfile = () => {
     //         throw new Error(e)
     //     })
     // }, [])
+    const calculate_age=(data)=> { 
+        var birthday = new Date(data[0], data[1], data[2]);
 
+        var diff_ms = Date.now() - birthday.getTime();
+        var age_dt = new Date(diff_ms); 
+      
+        return Math.abs(age_dt.getUTCFullYear() - 1970);
+    }
+    const handleToMain = () => {
+        history.push('/main')
+      }
     return (
         <div>
+            
             <MuiThemeProvider theme={Maintheme}>
                 <Paper square className={classes.paper}>
 
                     <AppBar position="fixed" >
 
-                        <Typography position="fixed" className={classes.text} variant="h5" gutterBottom  >
+                        <Typography position="fixed"  variant="h5" gutterBottom  >
                             Animar
                 </Typography>
 
                     </AppBar>
-                    <Grid container spacing={2} alignItems="center" justify="center">
-
-                        <Grid item xs={12} alignItems="center" justify="center">
-                            <Avatar src={avata_image} className={classes.avatar}>
+                    <Grid container alignItems="center" justify="center" >
+                        
+                            <Avatar src={avata_image} className={classes.avatar}  >
                             </Avatar>
+                            </Grid>
+                    <Grid container alignItems="center" justify="center" >
+
+                            <Grid item xs={8}>
+                            <Typography className={classes.text} variant="h5"   >
+                                {DumyAnimalState.name}
+                            </Typography>
                         </Grid>
                     </Grid>
+                    <Grid container alignItems="center" justify="center" className={classes.userprof}>
+                        <Grid item xs={3}>
+                            <Typography className={classes.text} variant="h5"   >
+                            {DumyAnimalState.type}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Typography className={classes.text} variant="h5"   >
+                            {DumyAnimalState.sex===0 ? "Male" : "Female"}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Typography className={classes.text} variant="h5"   >
+                            {calculate_age(DumyAnimalState.barthday.split('/'))}yo
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Typography className={classes.text} variant="h5"   >
+                            {DumyAnimalState.residence} 
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid container alignItems="center" justify="center" className={classes.userprof}>
+                        <Grid item xs={8}>
+                            <Typography className={classes.left_text} variant="h5"   >
+                            {DumyAnimalState.profile} 
+                            </Typography>
+                        </Grid>
+                    </Grid>
+ 
+
                     <AppBar position="fixed" color="primary" className={classes.appBar}>
                         <Toolbar>
-                            <IconButton color="inherit" aria-label="open drawer"  >
+                        
+        
+                        <Grid item xs={6}>
+                        <Link href="#" onClick={handleToMain}>
+                            <IconButton style={{color:"#8E8484"}} aria-label="open drawer"  >
                                 <HomeIcon />
                             </IconButton>
+                        </Link>
+                        </Grid>
+                            <Grid item xs={6}>
 
                             <IconButton color="inherit">
                                 <PetsIcon />
                             </IconButton>
+                            </Grid>
                         </Toolbar>
                     </AppBar>
                 </Paper>

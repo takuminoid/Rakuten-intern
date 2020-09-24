@@ -23,7 +23,7 @@ const ViewProfile = () => {
 
     const dom = [animal]
 
-    const user_id = 'hosomi_test'
+    const user_id = 'hau'
 
     useEffect( async() => {
         getOtherAnimal(user_id)

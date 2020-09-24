@@ -39,6 +39,8 @@ import {Maintheme} from './theme';
 import {PostForm} from '../hooks/useUser';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import getAnimal from '../api/getAnimal' 
+import DoneIcon from '@material-ui/icons/Done';
+import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link';
 import { useHistory } from "react-router-dom";
 
@@ -85,8 +87,8 @@ const useStyles = makeStyles((theme) => ({
         // box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 0px 6px 10px 0px rgba(0,0,0,0.14), 0px 1px 18px 0px rgba(0,0,0,0.12);
 
     },
-    icons:{
-
+    form:{
+      marginTop:"30%",
     },
     avatar: {
       
@@ -113,7 +115,21 @@ const useStyles = makeStyles((theme) => ({
 
         right: 0,
         margin: '0 auto',
-      },
+      },cardMedia: {
+        backgroundColor:"#d97d5438",
+        paddingTop: '50.25%',
+        borderRadius: '0.5em',
+        margin: '3%',
+        marginTop: '3%',
+        // position: 'absolute',
+        width: '100%',
+        top: 0,
+        left: 0,
+        zIndex: 0,
+    },
+    form_input: {
+
+    },
   }));
 const Home = () => {
     const {
@@ -128,51 +144,39 @@ const Home = () => {
 
     //     handleContentChange(e)
     //     setErrorMessage(null)
-    const history = useHistory();
 
-    const handleToProf = () => {
-      history.push('/viewProfile')
-    }
-    const handleToPost = () => {
-      history.push('/Post')
-    }
+
 
 
     const classes = useStyles();
     const [loading, setLoading] = useState(true)
     const [Posts, setPosts] = useState([]) // レンダーするpostデータ
     const [page, setpage] = useState(1) //ページ番号
-
+    const [files, setFiles] = useState([]);
     var Post_data = {
         images: [],
         content: []
     };
     // postダイアログのsate
     const [open, setOpen] = React.useState(false);
-    const handleClickOpen = () => {
-      // setOpen(true);
-      handleToPost()
-    };
-    const handleClose = () => {
-      setOpen(false);
-    };
     const onChange = e => {
         handleContentChange(e.target.value)
         // Post_data.content= e.target.value
 
     }
-    const handlePostSubmmit =(e)=> {
+    const onSubmit =(e)=> {
         e.preventDefault();
         // handl_user_idChange(getAnimal().user_id)
-
-        handleClose();
+        console.log(state);
         handleSubmit(state)
+        handleToMain()
     };
 
     // 画像アップロード
     const handleCapture = ({ target }) => {
         const fileReader = new FileReader();
         const name = target.accept.includes('image') ? 'images' : 'videos';
+        setFiles(URL.createObjectURL(target.files[0])) // blob取り込み
 
         fileReader.readAsDataURL(target.files[0]);
         fileReader.onload = (e) => {
@@ -214,153 +218,86 @@ const Home = () => {
             throw new Error(e)
         })
     }, [])
-    
-    const _renderItems= function() {
-        return Posts.map(function(imageUrl, index) {
-          return (
-              <div >
-            {/* <img
-              src={imageUrl.largeImageURL}
-              key={index}
-              />
-                <img
-              src={imageUrl.userImageURL}
-              />
-              <p>{imageUrl.tags} </p>
-              <p>{imageUrl.likes} </p> */}
+    const history = useHistory();
 
-            <Card className={classes.root}>
-                {/* <CardHeader
-                    avatar={
-                    <Avatar aria-label="recipe" src={imageUrl.userImageURL} className={classes.avatar}>
-                        R
-                    </Avatar>
-                    }
-                    // title="This is tile"
-                    // subheader="September 14, 2016"
-                /> */}
-                <CardMedia
-                    className={classes.media}
-                    image={imageUrl.largeImageURL}
-                    // title="Paella dish"
-                />
-                <CardContent>
-                
-            
-
-                <Grid container spacing={2}>
-                <Grid item xs={3}>
-                <Avatar aria-label="recipe" src={imageUrl.userImageURL} className={classes.avatar}>
-                        R
-                    </Avatar></Grid>
-                <Grid item xs={9}>
-
-                    <Typography variant="body2" color="textSecondary" component="p">
-                    I am a cat. Cats are good pets, for they are clean and are not noisy.
-                    I would have gotten the promotion, but my attendance wasn’t good enough.
-                    </Typography></Grid>
-
-                    </Grid>
-
-                </CardContent>
-                <CardActions disableSpacing className={classes.icons}>
-                <Grid item xs/>
-                    <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
-                    </IconButton>
-                    <IconButton aria-label="share">
-                    <ShareIcon />
-                    </IconButton>
-                </CardActions>
-                
-                </Card>
-                        </div>
-
-                    );
-                    });
-      }
-    const _openPostDialog= function() {
-        return(
-            <div>
-            
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-              <DialogTitle id="form-dialog-title">Posts</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  To subscribe to this website, please enter your email address here. We will send updates
-                  occasionally.
-                </DialogContentText>
-            </DialogContent>
-
-              <form  onSubmit={handlePostSubmmit} className={classes.form,classes.sign_in_card} >
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="content"
-                  label="content"
-                  type="content"
-                  value={state.content} 
-                  onChange={onChange}
-                  placeholder="I am cat cataaafajfoijeoijfa cata aafafefa"
-                  fullWidth
-                />
-              <Fragment>
-                <input
-                    accept="image/*"
-                    className={classes.input}
-                    id="icon-button-photo"
-                    onChange={handleCapture}
-                    type="file"
-                />
-                <label htmlFor="icon-button-photo">
-                    <IconButton color="secondary" component="span">
-                        <PhotoCamera />
-                    </IconButton>
-                </label>
-            </Fragment>
-
-            </form>
-
-              <DialogActions>
-                <Button type="button" onClick={handleClose} color="inherit">
-                  Cancel
-                </Button>
-                <Button  type="submit" onClick={handlePostSubmmit} color="secondary">
-                  Subscribe
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </div>
-          )
-      }
+    const handleToProf = () => {
+      history.push('/viewProfile')
+    }
+    const handleToMain = () => {
+      history.push('/main')
+    }
     // const data =getAnimal() dom.map(u => ( <User {...u} /> ))
     // console.log(posts);
     return (
         <div>
             <MuiThemeProvider theme={Maintheme}>
-            <Paper square className={classes.paper}>
             <   AppBar position="fixed" >
-
                 <Typography  position="fixed" className={classes.text} variant="h5" gutterBottom  >
                     Animar
                 </Typography>
                 </   AppBar>
-                <_openPostDialog />
-
-                <_renderItems />
-                <Waypoint onEnter={onEnter} />
-
                 {loading ? (<h1>Loading</h1>) : <div></div>}
-                
+                <Grid container  alignItems="center" justify="center" className={classes.form} >
+                <Grid item xs={11} >
+                  <Paper square className={classes.paper}>
+
+                    
+                <Grid  item >
+        
+                  <Fragment>
+                  <input
+                      accept="image/*"
+                      className={classes.input}
+                      id="icon-button-photo"
+                      onChange={handleCapture}
+                      type="file"
+                  />
+                  <label htmlFor="icon-button-photo">
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image={files}
+                    // title="Paella dish"
+                /> 
+                      <IconButton color="secondary" component="span">
+                        
+                          <PhotoCamera />
+                      </IconButton>
+                  </label>
+              </Fragment>
+                  
+                  </Grid>
+
+                <form    className={classes.form_input}>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="content"
+                    label="Your tought here"
+                    type="content"
+                    value={state.content} 
+                    onChange={onChange}
+                    placeholder="Your tought here"
+                    fullWidth
+                  />
+ 
+
+              </form>
+            </Paper>
+
+              </Grid>
+              </Grid>
                 <AppBar position="fixed" color="primary" className={classes.appBar}>
                     <Toolbar>
-                        <IconButton  color="inherit" aria-label="open drawer"  >
-                            <HomeIcon />
-                        </IconButton>
-                        <Fab color="secondary" aria-label="add" className={classes.fabButton} onClick={handleClickOpen} >
-                            <AddIcon />
+                    <Link href="#" onClick={handleToMain}>
+                            <IconButton style={{color:"#8E8484"}} aria-label="open drawer"  >
+                                <HomeIcon />
+                            </IconButton>
+                        </Link>
+                        <Fab color="secondary" aria-label="add" className={classes.fabButton} onClick={onSubmit} >
+                            <DoneIcon />
                         </Fab>
                         <div className={classes.grow} />
+
                         <Link href="#" onClick={handleToProf}>
                         <IconButton  style={{color:"#8E8484"}} >
                             <PetsIcon />
@@ -368,7 +305,6 @@ const Home = () => {
                         </Link>
                     </Toolbar>
                 </AppBar>
-            </Paper>
             </MuiThemeProvider>
         </div>
     )
