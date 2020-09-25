@@ -1,3 +1,4 @@
+// author Kaito Imai
 import React, {useEffect, useState } from 'react';
 import postUser from '../api/postUserAPI';
 import HumanForm, {AnimalForm} from '../hooks/useUser';
