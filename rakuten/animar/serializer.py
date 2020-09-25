@@ -5,6 +5,9 @@ from .models import User, UserManager, Like, Type, Post
 from drf_extra_fields.fields import Base64ImageField
 
 class HumanSerializer(serializers.ModelSerializer):
+    '''
+    Author: Takumi Katayama
+    '''
     password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
@@ -19,6 +22,9 @@ class HumanSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+'''
+Author: Takahiro Suzuki
+'''
     image = Base64ImageField(required=True)
     class Meta:
         model = Post
