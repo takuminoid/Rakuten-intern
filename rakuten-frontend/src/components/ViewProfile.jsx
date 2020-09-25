@@ -1,3 +1,6 @@
+// author Kaito Imai
+// author Shunke Hosomi
+
 import React, {useState, useEffect ,useRef, Fragment,useCallback} from 'react'
 import GetPosts from '../api/getPostAPI'
 import Grid from '@material-ui/core/Grid';
