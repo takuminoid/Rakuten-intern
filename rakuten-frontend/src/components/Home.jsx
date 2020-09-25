@@ -1,3 +1,6 @@
+// author Kaito Imai
+
+// 一部 Takumi Katayama
 import React, {useState, useEffect ,useRef, useCallback } from 'react'
 import {useHistory} from 'react-router-dom'
 import { Waypoint } from 'react-waypoint';
@@ -16,7 +19,6 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-// import GetPosts from '../api/getPostAPI'           
 import AllPost from '../api/getPostAPI'
 import { CreateLike, DeleteLike } from '../api/postLike'
 
@@ -46,11 +48,6 @@ import {
     ThemeProvider,
     withStyles,
     createMuiTheme,} from '@material-ui/core/styles';
-
-
-
-
-
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -118,13 +115,6 @@ const Home = () => {
         state
     } = PostForm()
 
-    // const onChange = e => {
-    //     console.log(state.password);
-    //     console.log(state.email);
-
-    //     handleContentChange(e)
-    //     setErrorMessage(null)
-
     const handleToProf = () => {
       history.push('/viewProfile')
     }
@@ -162,25 +152,8 @@ const Home = () => {
         localStorage.clear()
       history.push('/signup')
     }
-
-    // const onChange =  async() => {
-    //     setLoading(true)
-    //     console.log("onChange");
-    //     setpage(page+1)
-    //     console.log(page);
-    //     // GetPosts({page})
-    //     AllPost()
-    //     .then((u) => {
-    //     setPosts(Posts.concat(u.hits))
-    //     // setPosts()
-    //         setLoading(false)
-    //     })
-    //     .catch((e) => {
-    //         throw new Error(e)
-    //     })
-    // }
-
-
+    
+    // author Takumi Katayama ここから
     useEffect(() => {
         const p = async () => {
             setLoading(true)
@@ -202,7 +175,6 @@ const Home = () => {
         post.map(i => {
             l.push(i)
         })
-        console.log(l)
         return l
     }
 
@@ -247,30 +219,10 @@ const Home = () => {
             const goodYet = p.is_liked ? true : false 
           return (
               <div >
-            {/* <img
-              src={imageUrl.largeImageURL}
-              key={index}
-              />
-                <img
-              src={imageUrl.userImageURL}
-              />
-              <p>{imageUrl.tags} </p>
-              <p>{imageUrl.likes} </p> */}
-
             <Card className={classes.root} key={p.id}>
-                {/* <CardHeader
-                    avatar={
-                    <Avatar aria-label="recipe" src={imageUrl.userImageURL} className={classes.avatar}>
-                        R
-                    </Avatar>
-                    }
-                    // title="This is tile"
-                    // subheader="September 14, 2016"
-                /> */}
                 <CardMedia
                     className={classes.media}
                     image={domain+p.image}
-                    // title="Paella dish"
                 />
                 <CardContent>
                 
@@ -312,6 +264,9 @@ const Home = () => {
                     );
                     });
       }
+    // ここら辺まで Takumi Katayama
+    
+    
     // const data =getAnimal() dom.map(u => ( <User {...u} /> ))
     // console.log(posts);
     return (
@@ -328,10 +283,6 @@ const Home = () => {
                         </Link>
                 </   AppBar>
                 <_renderItems />
-                {/* {Posts.map((p) => (<PostContent p={p} />))} */}
-            
-                {/* <Waypoint onEnter={onChange} /> */}
-
                 {loading ? (<h1>Loading</h1>) : <div></div>}
                 
                 <AppBar position="fixed" color="primary" className={classes.appBar}>
