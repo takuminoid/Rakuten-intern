@@ -10,6 +10,10 @@ from drf_extra_fields.fields import Base64ImageField
 
 
 class CustomUserManager(UserManager):
+    """
+    Author : Takumi Katayama
+    """
+
     use_in_migrations = True
 
     def _create_user(self, user_id, mail, password, name=None, image=None, sex=None, type=None, birthday=None, residence=None, profile=None, **extra_fields):
@@ -36,6 +40,9 @@ class CustomUserManager(UserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Author : Takumi Katayama
+    """
     id = models.AutoField(primary_key=True, unique=True)
     mail = models.EmailField(max_length=70)
     user_id = models.CharField(max_length=255, unique=True)  # 主キーは1つまでらしいからIDでやる、uniqueで制限をかける
@@ -74,6 +81,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         return _user_has_perm(self, perm, obj=obj)
 
 class Type(models.Model):
+    """
+    Author : Takumi Katayama
+    """
     id = models.AutoField(primary_key=True, unique=True)
     name = models.CharField(max_length=255)
 
@@ -95,6 +105,9 @@ class Like(models.Model):
 
 
 class Post(models.Model):
+    """
+    Author : Takumi Sato, Takahiro Suzuki
+    """
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images/')
     content = models.CharField(max_length=255, blank=True, null=True)
