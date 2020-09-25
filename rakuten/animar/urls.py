@@ -1,3 +1,9 @@
+"""
+Author : Takahiro Suzuki, Takumi Sato, Yuto Nakagaki, Takumi Katayama
+Date : 2020/09/16 ~ 2020/09/25
+Description : None
+"""
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import include, url
