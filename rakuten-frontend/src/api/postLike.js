@@ -1,3 +1,5 @@
+// author Takumi Katayama
+
 import toJson from '../toJson/toJson'
 
 var token = localStorage.getItem('token')
