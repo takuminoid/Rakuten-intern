@@ -1,3 +1,5 @@
+// auther Shunsuke Hosomi
+
 import React, {useEffect, useState } from 'react'
 
 import loginForSignup from '../api/login'
@@ -148,23 +150,5 @@ const PostForm = () => {
         state
     }
 }
-// const UserForm = () => {
-//     const [state, setState] = useState(initialState)
-
-//     const handleChange = e => {
-//         setState({...state, [e.target.name]: e.target.value })
-//     }
-
-//     const handleSubmit = (body) => {
-//         postUser(body)
-//         setState(initialState)
-//     }
-
-//     return {
-//         handleChange, 
-//         handleSubmit, 
-//         state, 
-//     }
-// }
 export default HumanForm;
 export  { AnimalForm,PostForm};

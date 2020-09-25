@@ -1,3 +1,7 @@
+"""
+author : Nakagaki Yuto
+"""
+
 from django.test import TestCase
 from animar.models import User, Type
 from animar.views import GetUserInfo

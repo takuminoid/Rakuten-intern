@@ -1,3 +1,5 @@
+// auther Takumi Katayama
+
 import { useEffect, useState } from 'react'
 import getAnimal from '../api/getAnimal'
 import { useHistory } from 'react-router-dom'
