@@ -1,3 +1,5 @@
+// auther Shunsuke Hosomi
+
 import React, {useEffect, useState } from 'react'
 
 import loginForSignup from '../api/login'
