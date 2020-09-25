@@ -1,3 +1,5 @@
+// author Shunsuke Hosomi
+
 import toJson from '../toJson/toJson'
 
 const loginForSignup = async (body) => {
