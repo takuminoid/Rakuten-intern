@@ -1,3 +1,5 @@
+// author Kaito Imai
+
 import React, {useState, useEffect ,useRef, Fragment,useCallback} from 'react'
 import { Waypoint } from 'react-waypoint';
 import { makeStyles } from '@material-ui/core/styles';
