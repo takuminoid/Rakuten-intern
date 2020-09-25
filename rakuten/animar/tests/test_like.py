@@ -1,3 +1,7 @@
+"""
+author : Nakagaki Yuto
+"""
+
 from django.test import TestCase
 from animar.models import Like, Post, User
 from animar.views import PostLike
