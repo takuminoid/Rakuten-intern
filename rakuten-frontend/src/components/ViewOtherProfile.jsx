@@ -1,3 +1,7 @@
+
+// author Kaito Imai
+// author Shunke Hosomi
+
 import React, {useState, useEffect} from 'react'
 
 import getAnimal,{getOtherAnimal} from '../api/getAnimal'
