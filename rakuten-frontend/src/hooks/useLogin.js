@@ -1,5 +1,5 @@
+// author Takumi Katayama
 import React, {useEffect, useState } from 'react'
-
 import loginA from '../api/login'
 import { useHistory } from 'react-router-dom'
 
