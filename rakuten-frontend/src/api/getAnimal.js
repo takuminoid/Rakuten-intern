@@ -1,3 +1,4 @@
+// author Shunsuke Hosomi
 const toJson = async (res) => {
     const js = await res.json()
     if (res.ok) {
