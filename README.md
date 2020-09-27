@@ -12,4 +12,4 @@
 (animar使うとこうなっちゃいます)
 
 # Author 
-Takumi Sato (バックエンドを担当)
+Takumi Sato (バックエンドを担当，Django)
